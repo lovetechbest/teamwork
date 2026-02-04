@@ -1,0 +1,78 @@
+#app {
+    padding-bottom: 60px;  /* Space for footer (60px = footer height + 20px gap) */
+    position: relative;
+}
+
+.main {
+  padding: 32px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 26px;
+}
+
+.column {
+  display: grid;
+  gap: 26px;
+}
+
+/* General card styling */
+.card {
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  min-height: 170px;
+  position: relative;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    0 18px 40px rgba(0,0,0,0.55);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 20px 45px rgba(0,0,0,0.6),
+    0 0 15px var(--accent-glow);
+}
+
+.card h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #f1f3ff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.footer-cards {
+  margin-bottom: 26px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px;
+}
+
+.card.small {
+  min-height: 130px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-cards {
+    grid-template-columns: 1fr;
+  }
+  .top-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}

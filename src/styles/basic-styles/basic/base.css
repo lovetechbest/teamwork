@@ -1,0 +1,43 @@
+:root {
+  --bg: #070b1c;
+  --bg-glow: #0c1230;
+  --panel: #0f1535;
+  --panel-2: #151c44;
+  --border: rgba(255,255,255,0.08);
+  --text: #e7eaf3;
+  --muted: #9aa3c7;
+  --accent: #6c7cff;
+  --accent-glow: rgba(108,124,255,0.35);
+  --radius: 18px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+body {
+  background:
+    radial-gradient(circle at 20% 10%, #121a4a, transparent 40%),
+    radial-gradient(circle at 80% 0%, #1b2466, transparent 45%),
+    linear-gradient(180deg, var(--bg-glow), var(--bg));
+  color: var(--text);
+  overflow-x: hidden;
+}
+.link-element {
+  text-decoration: none;
+}
+
+/* footer Styles */
+footer {
+  position: fixed;  /* Fix the footer at the bottom */
+  left: 0;
+  bottom: 20px;  /* 20px gap from the bottom */
+  width: 100%;
+  background-color: #007bff;  /* Blue background */
+  color: white;
+  text-align: center;
+  padding: 20px;
+  z-index: 1000;  /* Ensure it's above other content */
+}

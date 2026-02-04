@@ -1,0 +1,129 @@
+/* Daily Report Page Styles*/
+
+/* General body background for dark mode */
+
+
+/* Daily report container */
+.daily-report {
+  background-color: #2A2A3D; /* Dark blue-gray container background */
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 600px;
+  margin: 30px auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+}
+
+/* Adjusted styling for the 'Daily Report' title */
+.daily-report h2 {
+  color: #4A90E2; /* Softer blue title for contrast */
+  text-align: center;
+  font-size: 24px; /* Slightly larger font size for better emphasis */
+  margin-bottom: 20px; /* Space below the title */
+  font-weight: bold; /* Make it stand out */
+}
+
+/* Input Section */
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+/* Datepicker input for dark mode */
+.date-picker {
+  background-color: #3D3D5C; /* Darker grayish-blue background for the datepicker */
+  color: #E6E6E6; /* Light text for contrast */
+  border: 1px solid #4A90E2; /* Softer blue border */
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  width: 80%;
+  max-width: 400px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+/* Focus effect for datepicker */
+.date-picker:focus {
+  outline: none;
+  background-color: #4A4A69; /* Slightly lighter grayish-blue when focused */
+  border-color: #4A90E2;
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5); /* Glowing effect */
+}
+
+/* Textarea for dark mode */
+.report-textarea {
+  background-color: #3D3D5C; /* Darker grayish-blue background */
+  color: #E6E6E6; /* Light text for readability */
+  border: 1px solid #4A90E2; /* Softer blue border */
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  width: 80%;
+  max-width: 400px;
+  box-sizing: border-box;
+  resize: vertical;
+  transition: all 0.3s ease;
+  margin-bottom: 20px; /* Space below textarea */
+}
+
+/* Focus effect for textarea */
+.report-textarea:focus {
+  outline: none;
+  background-color: #4A4A69; /* Slightly lighter background when focused */
+  border-color: #4A90E2;
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+}
+
+/* Button for dark mode */
+.report-button {
+  background-color: #4A90E2; /* Softer blue background */
+  color: white; /* White text */
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 80%;
+  max-width: 400px;
+}
+
+/* Button hover effect for dark mode */
+.report-button:hover {
+  background-color: #357ABD; /* Softer hover blue */
+}
+
+/* Report List */
+.report-list {
+  margin-top: 30px;
+}
+
+/* No reports yet message */
+.no-reports {
+  text-align: center;
+  font-size: 16px;
+  color: #A5A5A5; /* Lighter gray for no reports message */
+}
+
+/* Individual Report Item */
+.report-item {
+  background-color: #2C2C3E; /* Slightly lighter grayish-blue for report items */
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  color: #4A90E2; /* Softer blue color for report header */
+}
+
+.report-text {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #E6E6E6; /* Light text for the report */
+}

@@ -1,0 +1,52 @@
+.client-status {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.client-status .status {
+  flex: 1;
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  border-radius: 12px;
+  padding: 16px 12px;
+  text-align: center;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    0 6px 15px rgba(0,0,0,0.35);
+  transition: transform 0.25s ease;
+}
+
+.client-status .status:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 8px 18px rgba(0,0,0,0.45);
+}
+
+.client-status .count {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.client-status .label {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.client-status .status.active .count { color: #4ade80; }       /* green */
+.client-status .status.contract .count { color: #facc15; }     /* yellow */
+
+@media (max-width: 768px) {
+  .client-status { flex-direction: column; }
+}
+.daily-report-content .card-image {
+  width: 60%;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+
+

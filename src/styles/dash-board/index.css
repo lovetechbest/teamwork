@@ -1,0 +1,8 @@
+/* Daily Report card */
+@import './dash/daily-report.css';
+
+/* Clients card */
+@import './dash/clients.css';
+
+/* Projects card */
+@import './dash/projects.css';

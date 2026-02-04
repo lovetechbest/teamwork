@@ -1,0 +1,4 @@
+
+
+.announcement.reported .count { color: #4ade80; }   /* completed */
+.announcement.not-reported .count { color: #facc15; } /* in progress */
