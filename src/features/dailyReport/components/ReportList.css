@@ -1,0 +1,11 @@
+.report-list {
+  margin-top: 40px;
+}
+
+.no-reports {
+  text-align: center;
+  font-size: 16px;
+  color: var(--muted);
+  padding: 40px 20px;
+  opacity: 0.7;
+}

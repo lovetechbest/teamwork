@@ -60,3 +60,42 @@ button {
     border-radius: 5px;
     cursor: pointer;
 }
+
+/* For cards */
+.projects-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.project-card {
+    background: linear-gradient(145deg, #1c2b4a, #1a2340); /* dark-blue gradient */
+    border-radius: 12px;
+    padding: 20px;
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+}
+
+.project-card h3 {
+    margin: 0 0 10px 0;
+    color: #00bfff; /* bright accent for project title */
+    font-size: 1.2rem;
+}
+
+.project-card p {
+    margin: 6px 0;
+    color: #c0c8d4; /* light text for readability */
+    font-size: 0.95rem;
+}
+
+.project-card strong {
+    color: #ffffff; /* highlight labels */
+}
+

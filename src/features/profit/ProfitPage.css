@@ -1,0 +1,389 @@
+.profit-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.profit-page h1 {
+  color: var(--accent);
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 40px;
+  text-shadow: 0 0 20px var(--accent-glow);
+  letter-spacing: 0.5px;
+}
+
+.chart-container {
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 50px;
+  background: linear-gradient(145deg, var(--panel), var(--panel-2));
+  padding: 30px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 20px 40px rgba(0,0,0,0.4);
+}
+
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  background: linear-gradient(145deg, var(--panel), var(--panel-2));
+  padding: 30px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 20px 40px rgba(0,0,0,0.4),
+    0 0 0 1px rgba(108,124,255,0.1);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.calendar-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.6;
+}
+
+.calendar-container h3 {
+  color: var(--accent);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-shadow: 0 0 15px var(--accent-glow);
+  letter-spacing: 0.3px;
+}
+
+.selected-date {
+  margin-top: 20px;
+  padding: 12px 20px;
+  background: linear-gradient(145deg, var(--panel-2), var(--panel));
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+  width: 100%;
+  text-align: center;
+}
+
+.selected-date p {
+  margin: 0;
+  color: var(--accent);
+}
+
+.react-calendar {
+  width: 100% !important;
+  border: none !important;
+  border-radius: 12px !important;
+  background: transparent !important;
+  font-family: inherit !important;
+}
+
+.react-calendar__navigation {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 20px !important;
+  padding: 10px 0 !important;
+  border-bottom: 1px solid var(--border) !important;
+  background: transparent !important;
+}
+
+.react-calendar__navigation button {
+  background: linear-gradient(135deg, var(--panel-2), var(--panel)) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+  min-width: 40px !important;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2) !important;
+}
+
+.react-calendar__navigation button:hover {
+  background: linear-gradient(135deg, var(--accent), #5a66d1) !important;
+  color: white !important;
+  border-color: var(--accent) !important;
+  box-shadow: 
+    0 0 0 3px var(--accent-glow),
+    0 4px 12px rgba(108,124,255,0.3) !important;
+  transform: translateY(-2px) !important;
+}
+
+.react-calendar__navigation button:enabled:focus {
+  background: linear-gradient(135deg, var(--accent), #5a66d1) !important;
+  color: white !important;
+  border-color: var(--accent) !important;
+}
+
+.react-calendar__navigation__label {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: var(--accent) !important;
+  text-shadow: 0 0 10px var(--accent-glow) !important;
+  pointer-events: none !important;
+}
+
+.react-calendar__month-view__weekdays {
+  margin-bottom: 10px !important;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  padding: 10px 0 !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  color: var(--muted) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+}
+
+.react-calendar__tile {
+  background: linear-gradient(145deg, var(--panel-2), var(--panel)) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  color: var(--text) !important;
+  padding: 12px 8px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+  margin: 2px !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1) !important;
+}
+
+.react-calendar__tile:hover {
+  background: linear-gradient(135deg, rgba(108,124,255,0.3), rgba(108,124,255,0.2)) !important;
+  color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  box-shadow: 
+    0 0 0 2px var(--accent-glow),
+    0 4px 12px rgba(108,124,255,0.2) !important;
+  transform: translateY(-2px) scale(1.05) !important;
+  z-index: 1 !important;
+}
+
+.react-calendar__tile--active {
+  background: linear-gradient(135deg, var(--accent), #5a66d1) !important;
+  color: white !important;
+  border-color: var(--accent) !important;
+  box-shadow: 
+    0 0 0 3px var(--accent-glow),
+    0 4px 15px rgba(108,124,255,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.2) !important;
+  font-weight: 700 !important;
+  transform: scale(1.05) !important;
+}
+
+.react-calendar__tile--active:hover {
+  background: linear-gradient(135deg, #5a66d1, var(--accent)) !important;
+  transform: scale(1.08) translateY(-2px) !important;
+}
+
+.react-calendar__tile--now {
+  background: linear-gradient(145deg, rgba(108,124,255,0.15), rgba(108,124,255,0.1)) !important;
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+  font-weight: 700 !important;
+  box-shadow: 
+    0 0 0 2px rgba(108,124,255,0.3),
+    inset 0 1px 2px rgba(0,0,0,0.1) !important;
+}
+
+.react-calendar__tile--now:hover {
+  background: linear-gradient(135deg, rgba(108,124,255,0.3), rgba(108,124,255,0.2)) !important;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  color: #ff6b6b !important;
+}
+
+.react-calendar__month-view__days__day--weekend.react-calendar__tile--active {
+  color: white !important;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth {
+  color: var(--muted) !important;
+  opacity: 0.4 !important;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth:hover {
+  opacity: 0.6 !important;
+}
+
+.react-calendar__tile--disabled {
+  background: transparent !important;
+  color: var(--muted) !important;
+  opacity: 0.3 !important;
+  cursor: not-allowed !important;
+}
+
+.react-calendar__tile--disabled:hover {
+  background: transparent !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Manager Profit Page Styles */
+.profit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.refresh-button {
+  background: linear-gradient(135deg, var(--accent), #5a66d1);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(108,124,255,0.3);
+}
+
+.refresh-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(108,124,255,0.4);
+}
+
+.total-profit-card {
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 30px;
+  background: linear-gradient(145deg, var(--panel), var(--panel-2));
+  padding: 30px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 20px 40px rgba(0,0,0,0.4);
+}
+
+.total-profit-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.total-profit-icon {
+  font-size: 48px;
+  color: #4ade80;
+  filter: drop-shadow(0 0 10px rgba(74, 222, 128, 0.5));
+}
+
+.total-profit-label {
+  font-size: 16px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.total-profit-amount {
+  font-size: 36px;
+  font-weight: 700;
+  color: #4ade80;
+  text-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+}
+
+.user-profits-section {
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 30px;
+}
+
+.user-profits-section h2 {
+  color: var(--accent);
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-profits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.user-profit-card {
+  background: linear-gradient(145deg, var(--panel), var(--panel-2));
+  padding: 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 10px 20px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+}
+
+.user-profit-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.1),
+    0 15px 30px rgba(0,0,0,0.4);
+}
+
+.user-profit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.user-profit-header h3 {
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.user-profit-count {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--panel-2);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.user-profit-amount {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent);
+  text-shadow: 0 0 15px var(--accent-glow);
+}
+
+.loading-message,
+.error-message {
+  padding: 20px;
+  text-align: center;
+  color: var(--text);
+  background: linear-gradient(145deg, var(--panel), var(--panel-2));
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.error-message {
+  color: #ff6b6b;
+}

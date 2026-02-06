@@ -1,0 +1,12 @@
+.projects-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.no-projects {
+  text-align: center;
+  color: var(--muted);
+  padding: 40px 20px;
+  grid-column: 1 / -1;
+}

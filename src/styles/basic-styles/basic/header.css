@@ -14,9 +14,105 @@
 
 
 .top-header .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: var(--text);
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.logo-text {
   font-size: 20px;
   font-weight: 700;
   letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #ffd700, #ffed4e, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+.top-header .logo:hover .logo-text {
+  background: linear-gradient(135deg, #ffed4e, #ffd700, #ffed4e);
+  background-size: 200% 200%;
+  animation: textShine 2s ease infinite;
+}
+
+@keyframes textShine {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.logo-icon {
+  font-size: 24px;
+  transition: all 0.3s ease;
+}
+
+.coin-1,
+.coin-2 {
+  color: #ffd700;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+  animation: coinRotate 3s ease-in-out infinite;
+}
+
+.coin-2 {
+  animation-delay: 0.5s;
+}
+
+.gem-icon {
+  color: #ffd700;
+  filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.8));
+  animation: gemShine 2s ease-in-out infinite;
+  font-size: 28px;
+}
+
+.top-header .logo:hover .coin-1,
+.top-header .logo:hover .coin-2 {
+  transform: rotate(360deg) scale(1.2);
+  filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.9));
+}
+
+.top-header .logo:hover .gem-icon {
+  transform: scale(1.3) rotate(15deg);
+  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 1));
+}
+
+@keyframes coinRotate {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(90deg) scale(1.1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1);
+  }
+  75% {
+    transform: rotate(270deg) scale(1.1);
+  }
+}
+
+@keyframes gemShine {
+  0%, 100% {
+    filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.8));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 1));
+    transform: scale(1.1);
+  }
 }
 
 .top-nav {
@@ -32,8 +128,14 @@
   border-radius: 10px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   transition: all 0.25s ease;
+}
+
+.nav-icon {
+  font-size: 16px;
+  transition: all 0.25s ease;
+  opacity: 0.8;
 }
 
 .top-nav a.active,
@@ -44,4 +146,50 @@
     inset 0 1px 0 rgba(255,255,255,0.08),
     0 10px 25px rgba(0,0,0,0.4);
   transform: translateY(-1px);
+}
+
+.top-nav a.active .nav-icon,
+.top-nav a:hover .nav-icon {
+  opacity: 1;
+  color: var(--accent);
+  transform: scale(1.1);
+}
+
+.logout-button {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s ease;
+  background: transparent;
+  border: 1px solid rgba(255, 77, 87, 0.3);
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+  color: #ff4757;
+}
+
+.logout-button .nav-icon {
+  font-size: 16px;
+  transition: all 0.25s ease;
+  opacity: 0.8;
+  color: #ff4757;
+}
+
+.logout-button:hover {
+  background: linear-gradient(180deg, rgba(255, 77, 87, 0.1), rgba(255, 77, 87, 0.05));
+  color: #ff4757;
+  border-color: rgba(255, 77, 87, 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 10px 25px rgba(0,0,0,0.4);
+  transform: translateY(-1px);
+}
+
+.logout-button:hover .nav-icon {
+  opacity: 1;
+  transform: scale(1.1) rotate(-10deg);
 }

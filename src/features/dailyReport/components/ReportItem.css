@@ -1,0 +1,89 @@
+.report-item {
+  background: linear-gradient(145deg, var(--panel-2), var(--panel));
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    0 4px 15px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.report-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--accent), transparent);
+  opacity: 0.6;
+}
+
+.report-item:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 8px 25px rgba(0,0,0,0.3),
+    0 0 0 1px rgba(108,124,255,0.2);
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.report-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.report-user {
+  font-size: 0.85rem;
+  color: var(--muted);
+  background: var(--panel-2);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.report-date {
+  font-size: 15px;
+  letter-spacing: 0.3px;
+}
+
+.modify-btn {
+  background: linear-gradient(135deg, rgba(108,124,255,0.2), rgba(108,124,255,0.1));
+  color: var(--accent);
+  border: 1px solid rgba(108,124,255,0.3);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.modify-btn:hover {
+  background: linear-gradient(135deg, rgba(108,124,255,0.3), rgba(108,124,255,0.2));
+  border-color: var(--accent);
+  box-shadow: 0 0 10px rgba(108,124,255,0.3);
+  transform: translateY(-1px);
+}
+
+.report-text {
+  margin-top: 12px;
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.6;
+  opacity: 0.9;
+}

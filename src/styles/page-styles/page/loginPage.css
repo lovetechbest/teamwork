@@ -1,53 +1,194 @@
-/* In LoginPage.css (or your global CSS file) */
+/* ====== PAGE BACKGROUND ====== */
 .login-container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: #f9f9f9;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;       /* stack children vertically */
+  justify-content: center;      /* vertical center */
+  align-items: center;          /* horizontal center */
+  font-family: 'Inter', system-ui, sans-serif;
+  background: linear-gradient(135deg, #0f172a, #0b3c5d, #0a2540);
+  padding: 16px;                /* some padding for small screens */
+  box-sizing: border-box;
+  gap: 20px;                    /* spacing between h2, form, signup */
 }
 
-h2 {
-  text-align: center;
-  color: #333;
-}
-
-form {
+/* ====== LOGIN / SIGNUP CARD ====== */
+.login-container form {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 360px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 36px 32px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  gap: 14px;
+  box-sizing: border-box;
 }
 
-form div {
-  margin-bottom: 15px;
-}
-
-label {
-  font-weight: bold;
-}
-
-input {
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-button {
-  padding: 10px;
-  font-size: 16px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-p {
+/* ====== TITLE ====== */
+.login-container h2 {
   text-align: center;
-  color: red;
+  color: #e5f0ff;
+  margin: 0;
+  letter-spacing: 1px;
+  font-size: 24px;
+}
+
+/* ====== INPUTS ====== */
+.login-container input[type="text"],
+.login-container input[type="email"],
+.login-container input[type="password"] {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  margin-bottom: 14px;
+  background: #0b1220;
+  border: 1px solid #1e3a8a;
+  border-radius: 10px;
+  color: #e5f0ff;
+  font-size: 14px;
+  line-height: 40px;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+.login-container input::placeholder {
+  color: #7aa2d6;
+}
+
+.login-container input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+/* ====== SELECT ELEMENT ====== */
+.login-container select {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  margin-bottom: 14px;
+  border-radius: 10px;
+  border: 1px solid #1e3a8a;
+  background: #0b1220;
+  color: #e5f0ff;
+  font-size: 14px;
+  line-height: 40px;
+  appearance: none; /* removes default OS styling */
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.25s ease;
+}
+
+.login-container select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+/* ====== REMEMBER ME CHECKBOX ====== */
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #c7d2fe;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.remember-me input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+
+/* ====== BUTTONS (Login, SignUp, Back) ====== */
+.login-container button {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+}
+
+.login-container button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 35px rgba(37, 99, 235, 0.6);
+}
+
+.login-container button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ====== ERROR TEXT ====== */
+.error-text {
+  background: rgba(220, 38, 38, 0.15);
+  border: 1px solid rgba(220, 38, 38, 0.4);
+  color: #fecaca;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+/* ====== SIGNUP / LINK TEXT ====== */
+.signup-link {
+  text-align: center;
+  font-size: 13px;
+  color: #93c5fd;
+  cursor: default;
+}
+
+.signup-link span {
+  color: #60a5fa;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.signup-link span:hover {
+  text-decoration: underline;
+}
+
+/* Form group: label + input */
+.form-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 14px;
+  gap: 10px;
+}
+
+/* Labels */
+.form-group label {
+  width: 130px; /* fixed width for alignment */
+  color: #e5f0ff;
+  font-size: 14px;
+  text-align: right;
+}
+
+/* Inputs inside form-group */
+.form-group input,
+.form-group select {
+  flex: 1; /* fill remaining space */
+}
+
+.modify-btn {
+  width: auto;            /* prevent stretching */
+  padding: 4px 6px;       /* small icon button */
+  font-size: 14px;
+  line-height: 1;
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
