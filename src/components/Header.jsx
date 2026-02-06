@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
-import { logout } from '../store/auth/authActions';
+import { logout, changeUserInfo } from '../store/auth/authActions';
 import { 
   FaHome, 
   FaFileAlt, 
@@ -10,16 +11,53 @@ import {
   FaChartLine,
   FaSignOutAlt,
   FaCoins,
-  FaGem
+  FaGem,
+  FaUserEdit
 } from 'react-icons/fa';
 
 export default function Header({ onPageChange }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const handleLogout = () => {
-    dispatch(logout());
+  const [showChangeUserInfo, setShowChangeUserInfo] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const handleLogout = async () => {
+    await dispatch(logout());
     navigate('/');
+  };
+
+  const handleOpenChangeUserInfo = () => {
+    setShowChangeUserInfo(true);
+    setError('');
+  };
+
+  const handleCloseChangeUserInfo = () => {
+    setShowChangeUserInfo(false);
+    setUsername('');
+    setPassword('');
+    setConfirmPassword('');
+    setError('');
+  };
+
+  const handleChangeUserInfoSubmit = async (e) => {
+    e.preventDefault();
+    if (!username || !password || !confirmPassword) {
+      setError('Please fill User ID, password and confirm password.');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError('Passwords do not match!');
+      return;
+    }
+    setError('');
+    try {
+      await dispatch(changeUserInfo({ username, password, confirmPassword }));
+      handleCloseChangeUserInfo();
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
@@ -51,11 +89,58 @@ export default function Header({ onPageChange }) {
           <FaChartLine className="nav-icon" />
           Profit
         </NavLink>
+        <button onClick={handleOpenChangeUserInfo} className="nav-link change-userinfo-button" type="button">
+          <FaUserEdit className="nav-icon" />
+          Change UserInfo
+        </button>
         <button onClick={handleLogout} className="logout-button">
           <FaSignOutAlt className="nav-icon" />
           Logout
         </button>
       </nav>
+
+      {showChangeUserInfo && createPortal(
+        <div className="modal-overlay" onClick={handleCloseChangeUserInfo}>
+          <div className="modal-content change-userinfo-modal" onClick={e => e.stopPropagation()}>
+            <h3>Change User Info</h3>
+            {error && <p className="error-text">{error}</p>}
+            <form onSubmit={handleChangeUserInfoSubmit}>
+              <div className="form-group">
+                <label>User ID:</label>
+                <input
+                  type="text"
+                  placeholder="User ID"
+                  value={username}
+                  onChange={e => setUsername(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label>Password:</label>
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label>Confirm Password:</label>
+                <input
+                  type="password"
+                  placeholder="Confirm Password"
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                />
+              </div>
+              <div className="modal-actions">
+                <button type="submit">Update</button>
+                <button type="button" onClick={handleCloseChangeUserInfo}>Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>,
+        document.body
+      )}
     </header>
   );
 }

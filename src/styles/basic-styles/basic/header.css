@@ -29,30 +29,17 @@
   font-size: 20px;
   font-weight: 700;
   letter-spacing: 0.5px;
+  display: inline-block;
   background: linear-gradient(135deg, #ffd700, #ffed4e, #ffd700);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  background-size: 100% 100%;
   transition: all 0.3s ease;
 }
 
 .top-header .logo:hover .logo-text {
   background: linear-gradient(135deg, #ffed4e, #ffd700, #ffed4e);
-  background-size: 200% 200%;
-  animation: textShine 2s ease infinite;
-}
-
-@keyframes textShine {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
 }
 
 .logo-icon {
@@ -192,4 +179,144 @@
 .logout-button:hover .nav-icon {
   opacity: 1;
   transform: scale(1.1) rotate(-10deg);
+}
+
+/* Change UserInfo button in topbar */
+.top-nav .change-userinfo-button {
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px 14px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: inherit;
+  font-family: inherit;
+}
+
+.top-nav .change-userinfo-button:hover {
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  color: var(--text);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 10px 25px rgba(0,0,0,0.4);
+  transform: translateY(-1px);
+}
+
+.top-nav .change-userinfo-button:hover .nav-icon {
+  opacity: 1;
+  color: var(--accent);
+  transform: scale(1.1);
+}
+
+/* Change UserInfo modal - rendered via portal to document.body */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.modal-content.change-userinfo-modal {
+  background: linear-gradient(180deg, #1e2744, #151a30);
+  border-radius: 16px;
+  padding: 32px 36px;
+  min-width: 360px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6),
+              0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.modal-content.change-userinfo-modal h3 {
+  margin: 0 0 20px 0;
+  color: #e5f0ff;
+  font-size: 20px;
+}
+
+.modal-content.change-userinfo-modal .form-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.modal-content.change-userinfo-modal .form-group label {
+  flex-shrink: 0;
+  width: 130px;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.modal-content.change-userinfo-modal .form-group input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  background: #0f172a;
+  color: #e5f0ff;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.modal-content.change-userinfo-modal .form-group input::placeholder {
+  color: #64748b;
+}
+
+.modal-content.change-userinfo-modal .form-group input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+}
+
+.modal-content.change-userinfo-modal .modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.modal-content.change-userinfo-modal .modal-actions button {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.modal-content.change-userinfo-modal .modal-actions button[type="submit"] {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border: none;
+  color: #fff;
+}
+
+.modal-content.change-userinfo-modal .modal-actions button[type="button"] {
+  background: transparent;
+  border: 1px solid #334155;
+  color: #94a3b8;
+}
+
+.modal-content.change-userinfo-modal .modal-actions button:hover {
+  transform: translateY(-1px);
+}
+
+.modal-content.change-userinfo-modal .error-text {
+  margin-bottom: 16px;
+  background: rgba(220, 38, 38, 0.15);
+  border: 1px solid rgba(220, 38, 38, 0.4);
+  color: #fecaca;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
 }

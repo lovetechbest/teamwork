@@ -17,7 +17,7 @@ import FooterCards from '../components/FooterCards';
 const Pages = () => {
   const { role } = useSelector(state => state.auth);
   const userRole = role || sessionStorage.getItem("userRole");
-  const isManager = userRole === 'TeamLeader' || userRole === 'Manager';
+  const isManager = userRole === 'Team Leader' || userRole === 'Manager';
 
   return (
     <div>

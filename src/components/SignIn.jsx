@@ -40,7 +40,7 @@ const SignInPage = ({ onSignUpSuccess }) => {
       onSignUpSuccess?.();
 
       // Redirect based on role
-      if (role === 'TeamLeader' || role === 'Manager') {
+      if (role === 'Team Leader' || role === 'Manager') {
         navigate('/manager-dashboard');
       } else {
         navigate('/developer-dashboard');
@@ -83,7 +83,7 @@ const SignInPage = ({ onSignUpSuccess }) => {
           <label>Role:</label>
           <select value={role} onChange={(e) => setRole(e.target.value)}>
             <option value="Developer">Developer</option>
-            <option value="TeamLeader">Team Leader</option>
+            <option value="Team Leader">Team Leader</option>
             <option value="Manager">Manager</option>
           </select>
         </div>

@@ -4,17 +4,20 @@ export const login = (username, password) => async (dispatch) => {
   dispatch({ type: "LOGIN_REQUEST" });
 
   try {
+    console.log("Login attempt:", { userID: username, password: "***" });
     const res = await api.post("/auth/login", {
       userID: username,
       password: password,
     });
+    console.log("Login response received:", res.status, res.data);
 
     if (res.data && res.data.accessToken) {
       sessionStorage.setItem("accessToken", res.data.accessToken);
       
       console.log("Login response:", res.data);
       
-      let userId = res.data.user?.id || 
+      let userId = res.data.user?.uniqueID || 
+                   res.data.user?.id || 
                    res.data.userId || 
                    res.data.id || 
                    res.data.user?.userID ||
@@ -114,4 +117,41 @@ export const signUp = ({ name, username, password, confirmPassword, role }) => a
   }
 };
 
-export const logout = () => ({ type: "LOGOUT" });
+export const changeUserInfo = ({ username, password, confirmPassword }) => async (dispatch) => {
+  dispatch({ type: "CHANGE_USERINFO_REQUEST" });
+
+  try {
+    const res = await api.post("/auth/updateUserInfo", {
+      userID: username,
+      password,
+      confirmPassword,
+    });
+
+    if (res.data?.accessToken) {
+      sessionStorage.setItem("accessToken", res.data.accessToken);
+      const userId = res.data.user?.uniqueID || res.data.user?.id || res.data.userID;
+      if (userId) sessionStorage.setItem("userId", userId);
+      dispatch({ type: "LOGIN_SUCCESS", payload: { ...res.data, userId } });
+    }
+
+    return res.data;
+  } catch (err) {
+    const message = err.response?.data?.message || "Failed to update user info";
+    console.error("Change user info error:", err.response?.data);
+    dispatch({ type: "CHANGE_USERINFO_FAIL", payload: message });
+    throw new Error(message);
+  }
+};
+
+export const logout = () => async (dispatch) => {
+  try {
+    // Send logout request to server
+    await api.get("/auth/logout");
+  } catch (err) {
+    // Even if logout request fails, continue with local logout
+    console.error("Logout request failed:", err);
+  } finally {
+    // Always dispatch logout action and clear local storage
+    dispatch({ type: "LOGOUT" });
+  }
+};

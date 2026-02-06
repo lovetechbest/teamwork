@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { submitDailyReport } from '../../store/reports/reportActions';
+import { submitDailyReport, updateDailyReport, fetchReportForDate } from '../../store/reports/reportActions';
 import { useDailyReport } from './hooks/useDailyReport';
 import ReportForm from './components/ReportForm';
 import ReportList from './components/ReportList';
@@ -16,11 +16,15 @@ const DailyReportPage = () => {
     errorMessage,
     reports,
     currentUserId,
+    loadingToday,
     setErrorMessage,
     handleTextChange,
     enableModify,
     addReport,
   } = useDailyReport();
+
+  // Check if today's report already exists
+  const existingReport = reports.find(r => r.date === today);
 
   const handleReport = async () => {
     if (!reportText.trim()) {
@@ -61,14 +65,50 @@ const DailyReportPage = () => {
 
     setErrorMessage('');
     
+    const getReportId = () => existingReport?.reportId || existingReport?._id || existingReport?.id;
+
     try {
-      const result = await dispatch(submitDailyReport(payload));
+      let result;
+      
+      // If report exists with reportId, use update endpoint
+      const reportId = getReportId();
+      if (reportId) {
+        result = await dispatch(updateDailyReport(reportId, payload));
+      } else {
+        // First time submitting today - try to create new report
+        result = await dispatch(submitDailyReport(payload));
+        
+        // If create fails with "already exists" error, fetch report ID and try update
+        if (!result) {
+          const errorMsg = sessionStorage.getItem("lastReportError") || "";
+          const lowerMsg = errorMsg.toLowerCase();
+          if (lowerMsg.includes("already") || 
+              lowerMsg.includes("exist") || 
+              lowerMsg.includes("one report") ||
+              lowerMsg.includes("per day") ||
+              lowerMsg.includes("only create one")) {
+            sessionStorage.removeItem("lastReportError");
+            setErrorMessage("");
+            const report = await dispatch(fetchReportForDate(today, finalUserId));
+            const fetchedId = report?._id || report?.id;
+            if (fetchedId) {
+              result = await dispatch(updateDailyReport(fetchedId, payload));
+            }
+            if (result) {
+              addReport(reportText, result._id || result.id);
+              return;
+            }
+          }
+        }
+      }
       
       if (!result) {
+        const errorMsg = sessionStorage.getItem("lastReportError") || "Failed to submit report";
+        setErrorMessage(errorMsg);
         return;
       }
 
-      addReport(reportText);
+      addReport(reportText, result._id || result.id);
     } catch (error) {
       const errorMsg = error.message || "Failed to submit report. Please try again.";
       setErrorMessage(errorMsg);
@@ -90,8 +130,10 @@ const DailyReportPage = () => {
         reportText={reportText}
         isEditingToday={isEditingToday}
         errorMessage={errorMessage}
+        loading={loadingToday}
         onTextChange={handleTextChange}
         onSubmit={handleReport}
+        isModifying={!!existingReport && isEditingToday}
       />
 
       <ReportList

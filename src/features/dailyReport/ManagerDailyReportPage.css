@@ -1,0 +1,194 @@
+/* Compact Manager Daily Report - side-by-side layout */
+
+.manager-daily-report {
+  padding: 20px;
+  max-width: 1400px;
+}
+
+.manager-daily-report .report-header.compact {
+  margin-bottom: 16px;
+}
+
+.manager-daily-report .report-header.compact h2 {
+  font-size: 1.4rem;
+  margin-bottom: 0;
+}
+
+.manager-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.manager-my-report-form {
+  flex: 0 0 420px;
+  padding: 14px;
+  background: var(--panel-2);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  position: sticky;
+  top: 20px;
+}
+
+.manager-form-title {
+  font-size: 0.95rem;
+  color: var(--accent);
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.manager-my-report-form .report-form .input-section {
+  padding: 0;
+  gap: 12px;
+}
+
+.manager-my-report-form .date-picker,
+.manager-my-report-form .report-textarea,
+.manager-my-report-form .report-button,
+.manager-my-report-form .error-message {
+  max-width: 100%;
+  width: 100%;
+}
+
+.manager-my-report-form .report-textarea {
+  min-width: 100%;
+  min-height: 70px;
+}
+
+.manager-my-report-form .report-button {
+  padding: 10px 16px;
+  font-size: 14px;
+}
+
+.manager-section-title {
+  font-size: 0.95rem;
+  color: var(--accent);
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.manager-team-reports {
+  flex: 1;
+  min-width: 0;
+}
+
+.manager-daily-report .date-range-filter.compact {
+  margin-bottom: 16px;
+  gap: 8px;
+}
+
+.manager-daily-report .date-range-filter.compact .date-input {
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+.manager-daily-report .loading-message.compact,
+.manager-daily-report .error-message.compact,
+.manager-daily-report .no-reports.compact {
+  padding: 12px;
+  font-size: 14px;
+}
+
+.manager-reports-table-wrap {
+  overflow: auto;
+  max-height: 60vh;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+}
+
+.manager-reports-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: rgba(108, 124, 255, 0.2);
+}
+
+.manager-reports-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.manager-reports-table th,
+.manager-reports-table td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.manager-reports-table th {
+  background: rgba(108, 124, 255, 0.15);
+  color: var(--accent);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.manager-reports-table tbody tr:hover {
+  background: rgba(108, 124, 255, 0.05);
+}
+
+.manager-reports-table .col-username {
+  font-weight: 600;
+  color: var(--accent);
+  min-width: 100px;
+}
+
+.manager-reports-table .col-date {
+  white-space: nowrap;
+  min-width: 90px;
+}
+
+.manager-reports-table .col-report {
+  max-width: 200px;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.manager-reports-table .col-created,
+.manager-reports-table .col-updated {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.manager-reports-table .col-actions {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.delete-report-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.delete-report-btn:hover:not(:disabled) {
+  background: rgba(255, 107, 107, 0.3);
+  border-color: #ff6b6b;
+}
+
+.delete-report-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+  .manager-layout {
+    flex-direction: column;
+  }
+
+  .manager-my-report-form {
+    flex: none;
+    width: 100%;
+    position: static;
+  }
+}

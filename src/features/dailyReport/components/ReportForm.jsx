@@ -6,11 +6,14 @@ const ReportForm = ({
   reportText, 
   isEditingToday, 
   errorMessage,
+  loading = false,
   onTextChange, 
-  onSubmit 
+  onSubmit,
+  isModifying = false,
+  compact = false
 }) => {
   return (
-    <div className="report-form">
+    <div className={`report-form ${compact ? 'report-form-compact' : ''}`}>
       <div className="input-section">
         <input
           type="date"
@@ -20,12 +23,12 @@ const ReportForm = ({
         />
 
         <textarea
-          placeholder="Write today's report..."
+          placeholder={loading ? "Loading today's report..." : "Write today's report..."}
           value={reportText}
           onChange={onTextChange}
-          rows={5}
+          rows={compact ? 3 : 5}
           className="report-textarea"
-          disabled={!isEditingToday}
+          disabled={!isEditingToday || loading}
         />
 
         {errorMessage && (
@@ -37,9 +40,9 @@ const ReportForm = ({
         <button
           onClick={onSubmit}
           className="report-button"
-          disabled={!isEditingToday}
+          disabled={!isEditingToday || loading}
         >
-          Submit Report
+          {loading ? "Loading..." : isModifying ? "Update Report" : "Submit Report"}
         </button>
       </div>
     </div>

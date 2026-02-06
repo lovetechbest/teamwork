@@ -31,6 +31,7 @@ export default function authReducer(state = initialState, action) {
   switch (action.type) {
     case 'LOGIN_REQUEST':
     case 'SIGNUP_REQUEST':
+    case 'CHANGE_USERINFO_REQUEST':
       return {
         ...state,
         loading: true,
@@ -90,6 +91,7 @@ export default function authReducer(state = initialState, action) {
 
     case 'LOGIN_FAIL':
     case 'SIGNUP_FAIL':
+    case 'CHANGE_USERINFO_FAIL':
       return {
         ...state,
         loading: false,
@@ -100,6 +102,9 @@ export default function authReducer(state = initialState, action) {
       sessionStorage.removeItem("accessToken");
       sessionStorage.removeItem("userId");
       sessionStorage.removeItem("userRole");
+      Object.keys(localStorage)
+        .filter(k => k.startsWith('dailyReports'))
+        .forEach(k => localStorage.removeItem(k));
       return {
         isLoggedIn: false,
         user: null,

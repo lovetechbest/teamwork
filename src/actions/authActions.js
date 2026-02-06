@@ -1,8 +1,6 @@
 // src/store/authAction.js
 import api from "../api";
 
-const API = "http://172.20.100.100:5000"; // optional, already in api.js
-
 export const login = (username, password) => async (dispatch) => {
   dispatch({ type: "LOGIN_REQUEST" });
 

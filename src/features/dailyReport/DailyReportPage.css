@@ -130,6 +130,43 @@
   box-shadow: 0 6px 20px rgba(108,124,255,0.4);
 }
 
+.date-range-filter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.date-range-filter label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.date-range-filter .date-input {
+  background: linear-gradient(145deg, var(--panel-2), var(--panel));
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.date-range-filter .date-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.date-range-filter .date-input::-webkit-calendar-picker-indicator {
+  filter: invert(0.8);
+  cursor: pointer;
+}
+
 .team-reports-container {
   display: flex;
   flex-direction: column;

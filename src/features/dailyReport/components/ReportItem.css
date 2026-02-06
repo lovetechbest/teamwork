@@ -61,6 +61,22 @@
   letter-spacing: 0.3px;
 }
 
+.report-timestamps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.report-created,
+.report-updated {
+  background: var(--panel-2);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
 .modify-btn {
   background: linear-gradient(135deg, rgba(108,124,255,0.2), rgba(108,124,255,0.1));
   color: var(--accent);

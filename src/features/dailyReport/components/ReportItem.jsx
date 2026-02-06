@@ -1,7 +1,21 @@
 import React from 'react';
 import './ReportItem.css';
 
-const ReportItem = ({ report, isToday, onModify, showUserInfo = false }) => {
+const formatDateTime = (iso) => {
+  if (!iso) return null;
+  const d = new Date(iso);
+  return d.toLocaleString(undefined, {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+};
+
+const ReportItem = ({ report, isToday, onModify, showUserInfo = false, showTimestamps = false }) => {
+  const created = formatDateTime(report.createdAt);
+  const updated = formatDateTime(report.updatedAt);
+  const wasUpdated = report.updatedAt && report.createdAt &&
+    new Date(report.updatedAt).getTime() !== new Date(report.createdAt).getTime();
+
   return (
     <div className="report-item">
       <div className="report-header">
@@ -20,6 +34,12 @@ const ReportItem = ({ report, isToday, onModify, showUserInfo = false }) => {
           </button>
         )}
       </div>
+      {showTimestamps && (created || updated) && (
+        <div className="report-timestamps">
+          {created && <span className="report-created">Created: {created}</span>}
+          {wasUpdated && updated && <span className="report-updated">Updated: {updated}</span>}
+        </div>
+      )}
       <p className="report-text">{report.text}</p>
     </div>
   );

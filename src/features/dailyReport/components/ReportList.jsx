@@ -2,7 +2,7 @@ import React from 'react';
 import ReportItem from './ReportItem';
 import './ReportList.css';
 
-const ReportList = ({ reports, today, onModify, showUserInfo = false }) => {
+const ReportList = ({ reports, today, onModify, showUserInfo = false, showTimestamps = false }) => {
   if (reports.length === 0) {
     return (
       <div className="report-list">
@@ -24,6 +24,7 @@ const ReportList = ({ reports, today, onModify, showUserInfo = false }) => {
           isToday={report.date === today}
           onModify={onModify}
           showUserInfo={showUserInfo}
+          showTimestamps={showTimestamps}
         />
       ))}
     </div>

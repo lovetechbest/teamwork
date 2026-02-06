@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Pages from './pages';
 import LoginPage from './components/Login';
@@ -25,7 +25,7 @@ export default function App() {
           path="/*"
           element={isLoggedIn ? <Pages /> : <Navigate to="/" replace />}
         />
-      </Routes>  
+      </Routes>
     </BrowserRouter>
   );
 }
