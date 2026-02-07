@@ -13,11 +13,12 @@ import ManagerProfitPage from '../features/profit/ManagerProfitPage';
 
 import Header from '../components/Header';
 import FooterCards from '../components/FooterCards';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 const Pages = () => {
   const { role } = useSelector(state => state.auth);
   const userRole = role || sessionStorage.getItem("userRole");
-  const isManager = userRole === 'Team Leader' || userRole === 'Manager';
+  const isManager = userRole && ['team leader', 'manager', 'teamleader'].includes(String(userRole).toLowerCase());
 
   return (
     <div>
@@ -43,9 +44,11 @@ const Pages = () => {
           <Route 
             path="/daily-report" 
             element={
-              isManager ? 
-                <ManagerDailyReportPage /> : 
-                <DailyReportPage />
+              <ErrorBoundary>
+                {isManager ? 
+                  <ManagerDailyReportPage /> : 
+                  <DailyReportPage />}
+              </ErrorBoundary>
             } 
           />
           <Route path="/projects" element={<ProjectsPage />} />

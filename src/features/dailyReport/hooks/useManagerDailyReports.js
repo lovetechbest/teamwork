@@ -19,10 +19,10 @@ export const useManagerDailyReports = (dateRange = {}) => {
         if (dateRange.endDate) params.endDate = dateRange.endDate;
         
         const data = await dispatch(fetchAllDailyReports(params));
-        if (data) {
-          // Backend already filters by date range, so just use the response
-          const list = Array.isArray(data) ? data : data.reports || [];
-          setReports(list);
+        if (data && Array.isArray(data)) {
+          setReports(data);
+        } else if (data?.reports && Array.isArray(data.reports)) {
+          setReports(data.reports);
         } else {
           setReports([]);
         }
@@ -50,10 +50,10 @@ export const useManagerDailyReports = (dateRange = {}) => {
       if (dateRange.endDate) params.endDate = dateRange.endDate;
       
       const data = await dispatch(fetchAllDailyReports(params));
-      if (data) {
-        // Backend already filters by date range, so just use the response
-        const list = Array.isArray(data) ? data : data.reports || [];
-        setReports(list);
+      if (data && Array.isArray(data)) {
+        setReports(data);
+      } else if (data?.reports && Array.isArray(data.reports)) {
+        setReports(data.reports);
       }
     } catch (err) {
       setError(err.message || "Failed to refresh reports");

@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useManagerDailyReports } from './hooks/useManagerDailyReports';
 import { useDailyReport } from './hooks/useDailyReport';
-import { deleteDailyReports, submitDailyReport, updateDailyReport, fetchReportForDate, getServerDay } from '../../store/reports/reportActions';
+import { deleteDailyReports, submitDailyReport, updateDailyReport, fetchReportForDate, getServerDay, normalizeDate } from '../../store/reports/reportActions';
 import ReportForm from './components/ReportForm';
+import ReportList from './components/ReportList';
 import { FaUsers, FaTrash } from 'react-icons/fa';
 import './DailyReportPage.css';
 import './ManagerDailyReportPage.css';
@@ -40,6 +41,7 @@ const ManagerDailyReportPage = () => {
     loadingToday,
     setErrorMessage,
     handleTextChange,
+    enableModify,
     addReport,
   } = useDailyReport({ alwaysEditable: true });
 
@@ -120,14 +122,15 @@ const ManagerDailyReportPage = () => {
     }
   };
 
-  const flatReports = reports
+  const flatReports = (Array.isArray(reports) ? reports : [])
+    .filter((r) => r && (r._id || r.id))
     .map((r) => {
       const userId = typeof r.user === 'object' ? r.user?._id || r.user?.uniqueID : (r.user || r.userId || r.user_id || r.id);
       const userName = (typeof r.user === 'object' && r.user?.userID) ||
         r.userName || r.user_name || r.name ||
         (typeof r.user === 'object' ? r.user?.name : null) ||
         (userId ? `User ${String(userId).slice(-8)}` : 'Unknown');
-      const reportDate = r.date ? (typeof r.date === 'string' && r.date.includes('T') ? r.date.split('T')[0] : r.date) : null;
+      const reportDate = normalizeDate(r.date || r.reportDate);
       return {
         id: r._id || r.id,
         userId,
@@ -138,9 +141,7 @@ const ManagerDailyReportPage = () => {
         updatedAt: r.updatedAt,
       };
     })
-    .filter((r) => r.id)
-    .filter((r) => String(r.userId) !== String(currentUserId))
-    .sort((a, b) => new Date(b.date) - new Date(a.date));
+    .sort((a, b) => (new Date(b.date) || 0) - (new Date(a.date) || 0));
 
   const handleDelete = async (reportId) => {
     if (!window.confirm('Delete this report?')) return;
@@ -184,6 +185,12 @@ const ManagerDailyReportPage = () => {
           onSubmit={handleReport}
           isModifying={!!existingReport && isEditingToday}
           compact
+        />
+        <h4 className="manager-my-reports-title">My Submitted Reports</h4>
+        <ReportList
+          reports={myReports}
+          today={today}
+          onModify={enableModify}
         />
         </aside>
 

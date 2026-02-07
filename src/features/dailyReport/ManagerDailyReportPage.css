@@ -37,6 +37,13 @@
   font-weight: 600;
 }
 
+.manager-my-reports-title {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 16px 0 8px;
+  font-weight: 600;
+}
+
 .manager-my-report-form .report-form .input-section {
   padding: 0;
   gap: 12px;

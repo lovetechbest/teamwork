@@ -39,7 +39,7 @@ const toApiDate = (isoDate) => {
  * Normalize date to YYYY-MM-DD. Use date part when server sends midnight UTC
  * (2026-02-07T00:00:00.000Z = calendar day 02-07), else format in Pacific.
  */
-const normalizeDate = (d) => {
+export const normalizeDate = (d) => {
   if (!d) return null;
   const s = String(d).trim();
   const dateMatch = s.match(/^(\d{4}-\d{2}-\d{2})/);
