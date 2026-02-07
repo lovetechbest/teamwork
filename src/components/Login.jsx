@@ -27,7 +27,7 @@ export default function LoginPage() {
     try {
       await dispatch(login(username, password));
     } catch (error) {
-      console.error("Login error:", error);
+      // Error handled by auth action
     }
   };
 

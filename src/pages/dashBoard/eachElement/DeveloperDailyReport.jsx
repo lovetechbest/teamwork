@@ -1,57 +1,114 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { fetchReportForDate, getServerDay } from '../../../store/reports/reportActions';
 import '../../../styles/dash-board/dash/developer-daily-report.css';
+
+const STORAGE_KEY = 'dailyReports';
+const getStorageKey = (userId) => userId ? `${STORAGE_KEY}_${userId}` : STORAGE_KEY;
+
+const parseDate = (str) => {
+  const [y, m, d] = str.split('-').map(Number);
+  const d2 = new Date(y, m - 1, d);
+  d2.setDate(d2.getDate() - 1);
+  return d2.toISOString().split('T')[0];
+};
 
 export default function DeveloperDailyReport() {
   const [hasReportedToday, setHasReportedToday] = useState(false);
+  const [today, setToday] = useState('');
+  const [yesterdayStr, setYesterdayStr] = useState('');
+  const dispatch = useDispatch();
+  const { userId, user } = useSelector(state => state.auth);
+  const currentUserId = userId || user?.id || user?.userID || sessionStorage.getItem("userId");
+  const storageKey = getStorageKey(currentUserId);
 
   useEffect(() => {
-    const checkTodayReport = () => {
-      const today = new Date().toISOString().split('T')[0];
-      const saved = localStorage.getItem('dailyReports');
+    getServerDay().then((serverToday) => {
+      setToday(serverToday);
+      setYesterdayStr(parseDate(serverToday));
+    });
+  }, []);
+
+  const checkTodayReport = (reports) => {
+    if (!reports || !Array.isArray(reports)) return false;
+    return reports.some(r => r.date === today || r.date === yesterdayStr);
+  };
+
+  useEffect(() => {
+    if (!yesterdayStr) return;
+    const loadFromServer = async () => {
+      if (!currentUserId) {
+        const saved = localStorage.getItem(storageKey);
+        if (saved) {
+          try {
+            const reports = JSON.parse(saved);
+            setHasReportedToday(checkTodayReport(reports));
+          } catch {
+            setHasReportedToday(false);
+          }
+        }
+        return;
+      }
+      try {
+        const [todayReport, yesterdayReport] = await Promise.all([
+          dispatch(fetchReportForDate(today, currentUserId)),
+          dispatch(fetchReportForDate(yesterdayStr, currentUserId)),
+        ]);
+        if (todayReport || yesterdayReport) {
+          setHasReportedToday(true);
+          return;
+        }
+      } catch {
+        // ignore
+      }
+      const saved = localStorage.getItem(storageKey);
       if (saved) {
         try {
           const reports = JSON.parse(saved);
-          const todayReport = reports.find(r => r.date === today);
-          setHasReportedToday(!!todayReport);
-        } catch (e) {
+          setHasReportedToday(checkTodayReport(reports));
+        } catch {
           setHasReportedToday(false);
         }
       } else {
         setHasReportedToday(false);
       }
     };
+    loadFromServer();
+    const doCheck = () => {
+      const saved = localStorage.getItem(storageKey);
+      let reports = [];
+      if (saved) {
+        try {
+          reports = JSON.parse(saved);
+        } catch {}
+      }
+      setHasReportedToday(checkTodayReport(reports));
+    };
+    doCheck();
+    const interval = setInterval(doCheck, 3000);
 
-    checkTodayReport();
-    
-    const interval = setInterval(checkTodayReport, 5000);
-    
     const handleStorageChange = (e) => {
-      if (e.key === 'dailyReports' || !e.key) {
-        checkTodayReport();
-      }
+      if (!e.key || e.key.startsWith('dailyReports')) doCheck();
     };
-    
     window.addEventListener('storage', handleStorageChange);
-    
-    const customEvent = new CustomEvent('localStorageChange');
+    window.addEventListener('localStorageChange', doCheck);
+
     const originalSetItem = localStorage.setItem;
-    localStorage.setItem = function(...args) {
+    localStorage.setItem = function (...args) {
       originalSetItem.apply(this, args);
-      if (args[0] === 'dailyReports') {
-        window.dispatchEvent(customEvent);
+      if (args[0] && String(args[0]).startsWith('dailyReports')) {
+        window.dispatchEvent(new Event('localStorageChange'));
       }
     };
-    
-    window.addEventListener('localStorageChange', checkTodayReport);
-    
+
     return () => {
       clearInterval(interval);
       window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('localStorageChange', checkTodayReport);
+      window.removeEventListener('localStorageChange', doCheck);
       localStorage.setItem = originalSetItem;
     };
-  }, []);
+  }, [storageKey, currentUserId, today, yesterdayStr, dispatch]);
 
   return (
     <div className="card">

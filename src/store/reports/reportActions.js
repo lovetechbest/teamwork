@@ -1,9 +1,61 @@
 import api from "../../api";
 
+/**
+ * Fetch server's current day (YYYY-MM-DD). Use for "today" - matches server.
+ */
+export const getServerDay = async () => {
+  try {
+    const res = await api.get("/env/get-server-day");
+    const data = res?.data;
+    const day = data?.today || data?.day || data?.date;
+    if (day && typeof day === "string") {
+      const normalized = day.includes("T") ? day.split("T")[0] : day;
+      return normalized;
+    }
+    return new Date().toISOString().split("T")[0];
+  } catch (err) {
+    return new Date().toISOString().split("T")[0];
+  }
+};
+
+/** Fallback: Pacific time when server unavailable */
+export const getPacificDay = () => {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Los_Angeles",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  return formatter.format(new Date());
+};
+
 // Backend expects date as YYYY-M-D (no leading zeros)
 const toApiDate = (isoDate) => {
   const [y, m, d] = isoDate.split("-").map(Number);
   return `${y}-${m}-${d}`;
+};
+
+/**
+ * Normalize date to YYYY-MM-DD. Use date part when server sends midnight UTC
+ * (2026-02-07T00:00:00.000Z = calendar day 02-07), else format in Pacific.
+ */
+const normalizeDate = (d) => {
+  if (!d) return null;
+  const s = String(d).trim();
+  const dateMatch = s.match(/^(\d{4}-\d{2}-\d{2})/);
+  if (dateMatch) {
+    const datePart = dateMatch[1];
+    if (s === datePart || /T00:00(\.0+)?Z?$/.test(s)) return datePart;
+  }
+  const parsed = new Date(d);
+  if (isNaN(parsed.getTime())) return null;
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Los_Angeles",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  return formatter.format(parsed);
 };
 
 export const REPORT_SUBMIT_START = "REPORT_SUBMIT_START";
@@ -53,11 +105,6 @@ export const submitDailyReport = (payload) => async (dispatch) => {
                 err.response.data?.error || 
                 `Server error: ${err.response.status}`;
       
-      console.error("Report submit error:", {
-        status: err.response.status,
-        data: err.response.data,
-        headers: err.response.headers,
-      });
       
       // Store error message for potential retry logic
       sessionStorage.setItem("lastReportError", message);
@@ -72,12 +119,10 @@ export const submitDailyReport = (payload) => async (dispatch) => {
       }
     } else if (err.request) {
       message = "Network error: Could not reach the server. Please check your connection.";
-      console.error("Network error:", err.request);
       sessionStorage.setItem("lastReportError", message);
       alert(message);
     } else {
       message = err.message || "Failed to submit report";
-      console.error("Error:", err.message);
       sessionStorage.setItem("lastReportError", message);
       alert(message);
     }
@@ -133,18 +178,12 @@ export const updateDailyReport = (reportId, payload) => async (dispatch) => {
                 err.response.data?.error || 
                 `Server error: ${err.response.status}`;
       
-      console.error("Report update error:", {
-        status: err.response.status,
-        data: err.response.data,
-      });
       sessionStorage.setItem("lastReportError", message);
     } else if (err.request) {
       message = "Network error: Could not reach the server. Please check your connection.";
-      console.error("Network error:", err.request);
       sessionStorage.setItem("lastReportError", message);
     } else {
       message = err.message || "Failed to update report";
-      console.error("Error:", err.message);
       sessionStorage.setItem("lastReportError", message);
     }
     
@@ -170,7 +209,6 @@ export const deleteDailyReports = (reportIds) => async (dispatch) => {
     return { ok: true };
   } catch (err) {
     const msg = err.response?.data?.message || err.message || "Failed to delete";
-    console.error("Delete reports error:", err);
     return { ok: false, message: msg };
   }
 };
@@ -178,12 +216,12 @@ export const deleteDailyReports = (reportIds) => async (dispatch) => {
 export const fetchReportForDate = (date, forUserId = null) => async () => {
   try {
     const apiDate = toApiDate(date);
-    const res = await api.get("/dayreports/getReports", {
-      params: { startDate: apiDate, endDate: apiDate },
-    });
-    const list = Array.isArray(res.data) ? res.data : res.data?.reports || [];
-    const normalizeDate = (d) =>
-      d ? new Date(d).toISOString().split("T")[0] : null;
+    const params = { startDate: apiDate, endDate: apiDate };
+    if (forUserId) {
+      params.filter_userUniqueID = forUserId;
+    }
+    const res = await api.get("/dayreports/getReports", { params });
+    const list = Array.isArray(res.data) ? res.data : res.data?.reports || (Array.isArray(res.data?.data) ? res.data.data : []);
     const matchesDate = (r) => normalizeDate(r.date || r.reportDate) === date;
     const getReportUserId = (r) => {
       if (typeof r.user === "object") return r.user?._id || r.user?.id || r.user?.uniqueID;
@@ -196,8 +234,52 @@ export const fetchReportForDate = (date, forUserId = null) => async () => {
     };
     return list.find((r) => matchesDate(r) && matchesUser(r)) || null;
   } catch (err) {
-    console.error("Fetch report for date error:", err);
     return null;
+  }
+};
+
+/**
+ * Fetch report history for a user (for populating list after login)
+ * @param {string} forUserId - User ID to filter by
+ * @param {number} daysBack - Number of days to look back
+ * @param {string} [serverToday] - Optional server's "today" (YYYY-MM-DD) for consistent date range
+ */
+export const fetchReportHistory = async (forUserId, daysBack = 90, serverToday = null) => {
+  try {
+    const endDateStr = serverToday || (await getServerDay());
+    const end = new Date(endDateStr);
+    const start = new Date(end);
+    start.setDate(start.getDate() - daysBack);
+    const params = {
+      startDate: toApiDate(start.toISOString().split("T")[0]),
+      endDate: toApiDate(endDateStr),
+    };
+    if (forUserId) {
+      params.filter_userUniqueID = forUserId;
+    }
+    const res = await api.get("/dayreports/getReports", { params });
+    const list = Array.isArray(res.data) ? res.data : res.data?.reports || (Array.isArray(res.data?.data) ? res.data.data : []);
+    const getReportUserId = (r) => {
+      if (typeof r.user === "object") return r.user?._id || r.user?.id || r.user?.uniqueID;
+      return r.user || r.userId || r.user_id;
+    };
+    const matchesUser = (r) => {
+      if (!forUserId) return true;
+      const uid = getReportUserId(r);
+      return uid && String(uid) === String(forUserId);
+    };
+    return list
+      .filter((r) => matchesUser(r))
+      .map((r) => ({
+        id: Date.now() + Math.random(),
+        reportId: r._id || r.id,
+        date: normalizeDate(r.date || r.reportDate),
+        text: r.main_content || r.content || r.text,
+      }))
+      .filter((r) => r.date)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+  } catch (err) {
+    return [];
   }
 };
 
@@ -260,18 +342,10 @@ export const fetchAllDailyReports = (params = {}) => async (dispatch) => {
                 err.response.data?.error || 
                 `Server error: ${err.response.status}`;
       
-      console.error("Fetch reports error:", {
-        status: err.response.status,
-        data: err.response.data,
-        url: "/dayreports/getReports",
-        params: apiParams,
-      });
     } else if (err.request) {
       message = "Network error: Could not reach the server. Please check your connection.";
-      console.error("Network error:", err.request);
     } else {
       message = err.message || "Failed to fetch reports";
-      console.error("Error:", err.message);
     }
 
     dispatch({

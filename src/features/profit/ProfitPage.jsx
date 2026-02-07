@@ -39,7 +39,6 @@ const ProfitPage = () => {
 
   const onDateChange = (newDate) => {
     setDate(newDate);
-    console.log('Selected Date:', newDate);
   };
 
   return (

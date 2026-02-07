@@ -4,19 +4,16 @@ export const login = (username, password) => async (dispatch) => {
   dispatch({ type: "LOGIN_REQUEST" });
 
   try {
-    console.log("Login attempt:", { userID: username, password: "***" });
     const res = await api.post("/auth/login", {
       userID: username,
       password: password,
     });
-    console.log("Login response received:", res.status, res.data);
 
     if (res.data && res.data.accessToken) {
       sessionStorage.setItem("accessToken", res.data.accessToken);
       
-      console.log("Login response:", res.data);
-      
       let userId = res.data.user?.uniqueID || 
+                   res.data.user?._id || 
                    res.data.user?.id || 
                    res.data.userId || 
                    res.data.id || 
@@ -34,24 +31,18 @@ export const login = (username, password) => async (dispatch) => {
             const payload = JSON.parse(atob(tokenParts[1]));
             userId = payload.id || payload.userId || payload.userID || payload.sub;
             userRole = userRole || payload.role || payload.userRole;
-            console.log("Extracted userId from token:", userId);
-            console.log("Extracted role from token:", userRole);
           }
         } catch (e) {
-          console.warn("Could not decode token:", e);
+          // Could not decode token
         }
       }
       
       if (userId) {
         sessionStorage.setItem("userId", userId);
-        console.log("Stored userId:", userId);
-      } else {
-        console.warn("User ID not found in login response. Response structure:", res.data);
       }
       
       if (userRole) {
         sessionStorage.setItem("userRole", userRole);
-        console.log("Stored userRole:", userRole);
       }
       
       dispatch({
@@ -68,16 +59,10 @@ export const login = (username, password) => async (dispatch) => {
     
     if (err.response) {
       message = err.response.data?.message || err.response.data?.error || `Server error: ${err.response.status}`;
-      console.error("Login error:", {
-        status: err.response.status,
-        data: err.response.data,
-      });
     } else if (err.request) {
       message = "Network error: Could not reach the server. Please check your connection.";
-      console.error("Network error:", err.request);
     } else {
       message = err.message || "Login failed";
-      console.error("Error:", err.message);
     }
     
     dispatch({ type: "LOGIN_FAIL", payload: message });
@@ -97,8 +82,6 @@ export const signUp = ({ name, username, password, confirmPassword, role }) => a
       role,
     });
 
-    console.log("Backend success reply:", res.data);
-
     if (role) {
       sessionStorage.setItem("userRole", role);
     }
@@ -111,7 +94,6 @@ export const signUp = ({ name, username, password, confirmPassword, role }) => a
     return res.data;
   } catch (err) {
     const message = err.response?.data?.message || "Signup failed";
-    console.error("Backend error reply:", err.response?.data);
     dispatch({ type: "SIGNUP_FAIL", payload: message });
     throw new Error(message);
   }
@@ -137,7 +119,6 @@ export const changeUserInfo = ({ username, password, confirmPassword }) => async
     return res.data;
   } catch (err) {
     const message = err.response?.data?.message || "Failed to update user info";
-    console.error("Change user info error:", err.response?.data);
     dispatch({ type: "CHANGE_USERINFO_FAIL", payload: message });
     throw new Error(message);
   }
@@ -149,7 +130,6 @@ export const logout = () => async (dispatch) => {
     await api.get("/auth/logout");
   } catch (err) {
     // Even if logout request fails, continue with local logout
-    console.error("Logout request failed:", err);
   } finally {
     // Always dispatch logout action and clear local storage
     dispatch({ type: "LOGOUT" });

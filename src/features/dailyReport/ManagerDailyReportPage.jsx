@@ -1,22 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useManagerDailyReports } from './hooks/useManagerDailyReports';
 import { useDailyReport } from './hooks/useDailyReport';
-import { deleteDailyReports, submitDailyReport, updateDailyReport, fetchReportForDate } from '../../store/reports/reportActions';
+import { deleteDailyReports, submitDailyReport, updateDailyReport, fetchReportForDate, getServerDay } from '../../store/reports/reportActions';
 import ReportForm from './components/ReportForm';
 import { FaUsers, FaTrash } from 'react-icons/fa';
 import './DailyReportPage.css';
 import './ManagerDailyReportPage.css';
-
-const getDefaultDates = () => {
-  const end = new Date();
-  const start = new Date();
-  start.setDate(start.getDate() - 30);
-  return {
-    startDate: start.toISOString().split('T')[0],
-    endDate: end.toISOString().split('T')[0],
-  };
-};
 
 const formatDateTime = (iso) => {
   if (!iso) return '—';
@@ -25,7 +15,18 @@ const formatDateTime = (iso) => {
 
 const ManagerDailyReportPage = () => {
   const dispatch = useDispatch();
-  const [dateRange, setDateRange] = useState(getDefaultDates);
+  const [dateRange, setDateRange] = useState({ startDate: '', endDate: '' });
+
+  useEffect(() => {
+    getServerDay().then((serverToday) => {
+      const [y, m, d] = serverToday.split('-').map(Number);
+      const end = new Date(y, m - 1, d);
+      const start = new Date(y, m - 1, d);
+      start.setDate(start.getDate() - 30);
+      const startStr = `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, '0')}-${String(start.getDate()).padStart(2, '0')}`;
+      setDateRange({ startDate: startStr, endDate: serverToday });
+    });
+  }, []);
   const { reports, loading, error, refreshReports } = useManagerDailyReports(dateRange);
   const [deleting, setDeleting] = useState(null);
 
@@ -46,6 +47,7 @@ const ManagerDailyReportPage = () => {
 
   // Manager/TeamLeader: create or update (backend allows one per day) - same flow as developer
   const handleReport = async () => {
+    if (!today) return;
     if (!reportText.trim()) {
       alert("Please enter your report!");
       return;
@@ -62,7 +64,7 @@ const ManagerDailyReportPage = () => {
             if (finalUserId) sessionStorage.setItem("userId", finalUserId);
           }
         } catch (e) {
-          console.error("Error decoding token:", e);
+          // Could not decode token
         }
       }
     }

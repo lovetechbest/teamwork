@@ -51,14 +51,10 @@ export default function authReducer(state = initialState, action) {
       
       if (userId) {
         sessionStorage.setItem("userId", userId);
-        console.log("Reducer: Stored userId:", userId);
-      } else {
-        console.warn("Reducer: User ID not found in payload:", action.payload);
       }
       
       if (userRole) {
         sessionStorage.setItem("userRole", userRole);
-        console.log("Reducer: Stored role:", userRole);
       }
       
       return {

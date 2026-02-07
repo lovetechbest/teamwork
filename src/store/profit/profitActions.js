@@ -35,16 +35,10 @@ export const fetchAllProfits = (params = {}) => async (dispatch) => {
                 err.response.data?.error || 
                 `Server error: ${err.response.status}`;
       
-      console.error("Fetch profits error:", {
-        status: err.response.status,
-        data: err.response.data,
-      });
     } else if (err.request) {
       message = "Network error: Could not reach the server. Please check your connection.";
-      console.error("Network error:", err.request);
     } else {
       message = err.message || "Failed to fetch profits";
-      console.error("Error:", err.message);
     }
 
     dispatch({

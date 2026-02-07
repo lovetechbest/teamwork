@@ -10,6 +10,19 @@
   padding: 20px 0;
 }
 
+.server-day-label {
+  font-size: 13px;
+  color: var(--muted);
+  width: 100%;
+  max-width: 400px;
+  text-align: left;
+}
+
+.server-day-value {
+  font-weight: 600;
+  color: var(--accent);
+}
+
 .date-picker,
 .report-textarea {
   background: linear-gradient(145deg, var(--panel-2), var(--panel));

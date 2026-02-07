@@ -15,9 +15,12 @@ const ReportForm = ({
   return (
     <div className={`report-form ${compact ? 'report-form-compact' : ''}`}>
       <div className="input-section">
+        <label className="server-day-label">
+          Server day: <span className="server-day-value">{today || (loading ? '…' : '—')}</span>
+        </label>
         <input
           type="date"
-          value={today}
+          value={today || ''}
           disabled
           className="date-picker"
         />

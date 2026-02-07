@@ -27,6 +27,7 @@ const DailyReportPage = () => {
   const existingReport = reports.find(r => r.date === today);
 
   const handleReport = async () => {
+    if (!today) return;
     if (!reportText.trim()) {
       alert("Please enter today's report!");
       return;
@@ -47,7 +48,7 @@ const DailyReportPage = () => {
             }
           }
         } catch (e) {
-          console.error("Error decoding token:", e);
+          // Could not decode token
         }
       }
     }

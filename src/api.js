@@ -17,13 +17,6 @@ api.interceptors.request.use(
         if (accessToken) {
             config.headers.Authorization = `Bearer ${accessToken}`;
         }
-        // Debug logging for requests
-        console.log("API Request:", {
-            method: config.method?.toUpperCase(),
-            url: config.baseURL + config.url,
-            data: config.data,
-            headers: config.headers,
-        });
         return config;
     },
     (error) => {
@@ -52,7 +45,6 @@ api.interceptors.response.use(
                 originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
                 return api(originalRequest);
             } catch (err) {
-                console.error("Refresh token failed:", err);
                 window.location.href = "/";
                 return Promise.reject(err);
             }

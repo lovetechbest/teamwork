@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchReportForDate } from '../../../store/reports/reportActions';
+import { fetchReportForDate, fetchReportHistory, getServerDay } from '../../../store/reports/reportActions';
 
 const STORAGE_KEY = 'dailyReports';
 
@@ -10,7 +10,7 @@ export const useDailyReport = (options = {}) => {
   const { alwaysEditable = false } = options;
   const dispatch = useDispatch();
   const { userId, user } = useSelector(state => state.auth);
-  const today = new Date().toISOString().split('T')[0];
+  const [today, setToday] = useState(null);
   const currentUserId = userId || user?.id || user?.userID || sessionStorage.getItem("userId");
   const storageKey = getStorageKey(currentUserId);
   
@@ -20,54 +20,58 @@ export const useDailyReport = (options = {}) => {
   const [loadingToday, setLoadingToday] = useState(true);
   const [reports, setReports] = useState([]);
 
-  // Reload from correct storage when user changes (e.g. after login/logout)
+  // Single effect: use server day for "today", then load reports
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(storageKey);
-      setReports(saved ? JSON.parse(saved) : []);
-    } catch {
-      setReports([]);
-    }
-  }, [storageKey]);
-
-  // Fetch today's report from backend on load (developer can see what they submitted and modify)
-  useEffect(() => {
-    const loadTodayReport = async () => {
+    let cancelled = false;
+    const run = async () => {
       setLoadingToday(true);
       try {
-        const report = await dispatch(fetchReportForDate(today, currentUserId));
-        if (report) {
-          const text = report.main_content || report.content || report.text;
-          const reportId = report._id || report.id;
-          setReports(prev => {
-            const filtered = prev.filter(r => r.date !== today);
-            const newReport = { id: Date.now(), reportId, date: today, text };
-            return [newReport, ...filtered];
-          });
-          setReportText(text);
-          if (!alwaysEditable) setIsEditingToday(false);
-        } else {
-          // Server has no report (e.g. deleted) - clear cached report and allow writing
-          setReports(prev => prev.filter(r => r.date !== today));
-          setReportText('');
-          setIsEditingToday(true);
+        const serverToday = await getServerDay();
+        if (cancelled) return;
+        setToday(serverToday);
+        if (!currentUserId) {
+          setLoadingToday(false);
+          return;
         }
+        const [report, history] = await Promise.all([
+          dispatch(fetchReportForDate(serverToday, currentUserId)),
+          fetchReportHistory(currentUserId, 90, serverToday),
+        ]);
+        let mergedReports;
+        let todayText = '';
+        let hasTodayReport = false;
+        if (report) {
+          todayText = report.main_content || report.content || report.text || '';
+          hasTodayReport = true;
+          const newReport = { id: Date.now(), reportId: report._id || report.id, date: serverToday, text: todayText };
+          const filtered = (history.length > 0 ? history : []).filter(r => r.date !== serverToday);
+          mergedReports = [newReport, ...filtered];
+        } else if (history.length > 0) {
+          mergedReports = history;
+          const todayReport = history.find(r => r.date === serverToday);
+          hasTodayReport = !!todayReport;
+          if (todayReport) todayText = todayReport.text;
+        } else {
+          mergedReports = [];
+        }
+        setReports(mergedReports);
+        setReportText(todayText);
+        if (!alwaysEditable) setIsEditingToday(!hasTodayReport);
       } catch (e) {
-        setReports(prev => prev.filter(r => r.date !== today));
-        setReportText('');
-        setIsEditingToday(true);
+        // keep existing state
       } finally {
-        setLoadingToday(false);
+        if (!cancelled) setLoadingToday(false);
       }
     };
-    loadTodayReport();
-  }, [today, dispatch, alwaysEditable, storageKey, currentUserId]);
+    run();
+    return () => { cancelled = true; };
+  }, [dispatch, alwaysEditable, storageKey, currentUserId]);
 
   useEffect(() => {
     try {
       localStorage.setItem(storageKey, JSON.stringify(reports));
     } catch (e) {
-      console.warn('Failed to save reports to localStorage', e);
+      // Failed to save to localStorage
     }
   }, [reports, storageKey]);
 
@@ -90,6 +94,7 @@ export const useDailyReport = (options = {}) => {
   };
 
   const addReport = (text, reportId) => {
+    if (!today) return;
     const newReport = { id: Date.now(), reportId, date: today, text };
     setReports(prev => [newReport, ...prev.filter(r => r.date !== today)]);
     setIsEditingToday(false);
