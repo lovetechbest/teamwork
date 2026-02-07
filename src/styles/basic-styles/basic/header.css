@@ -2,110 +2,89 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 32px;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 20px;
   background: linear-gradient(180deg, #0c1235, #080c22);
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(14px);
   position: sticky;
   top: 0;
   z-index: 10;
-
 }
-
 
 .top-header .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
   color: var(--text);
   padding: 4px 8px;
   border-radius: 8px;
+  flex-shrink: 0;
 }
 
-.logo-text {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  display: inline-block;
-  background: linear-gradient(135deg, #ffd700, #ffed4e, #ffd700);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  background-size: 100% 100%;
-  transition: all 0.3s ease;
-}
-
-.top-header .logo:hover .logo-text {
-  background: linear-gradient(135deg, #ffed4e, #ffd700, #ffed4e);
+.logo-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(145deg, rgba(255, 215, 0, 0.25), rgba(255, 193, 7, 0.12));
+  border-radius: 12px;
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 4px 20px rgba(255, 215, 0, 0.2);
+  transition: all 0.35s ease;
 }
 
 .logo-icon {
-  font-size: 24px;
-  transition: all 0.3s ease;
-}
-
-.coin-1,
-.coin-2 {
+  font-size: 22px;
   color: #ffd700;
-  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
-  animation: coinRotate 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.7));
+  transition: all 0.35s ease;
 }
 
-.coin-2 {
-  animation-delay: 0.5s;
+.top-header .logo:hover .logo-icon-wrap {
+  transform: scale(1.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 6px 28px rgba(255, 215, 0, 0.35);
+  border-color: rgba(255, 215, 0, 0.5);
 }
 
-.gem-icon {
-  color: #ffd700;
-  filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.8));
-  animation: gemShine 2s ease-in-out infinite;
-  font-size: 28px;
+.top-header .logo:hover .logo-icon {
+  filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.9));
 }
 
-.top-header .logo:hover .coin-1,
-.top-header .logo:hover .coin-2 {
-  transform: rotate(360deg) scale(1.2);
-  filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.9));
+.logo-text {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: inline-block;
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 35%, #ffd700 70%, #ffec8b 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: all 0.4s ease;
+  text-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
 }
 
-.top-header .logo:hover .gem-icon {
-  transform: scale(1.3) rotate(15deg);
-  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 1));
-}
-
-@keyframes coinRotate {
-  0%, 100% {
-    transform: rotate(0deg) scale(1);
-  }
-  25% {
-    transform: rotate(90deg) scale(1.1);
-  }
-  50% {
-    transform: rotate(180deg) scale(1);
-  }
-  75% {
-    transform: rotate(270deg) scale(1.1);
-  }
-}
-
-@keyframes gemShine {
-  0%, 100% {
-    filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.8));
-    transform: scale(1);
-  }
-  50% {
-    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 1));
-    transform: scale(1.1);
-  }
+.top-header .logo:hover .logo-text {
+  background-position: 100% 0;
 }
 
 .top-nav {
   display: flex;
-  gap: 20px;
+  gap: 10px;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .top-nav a {

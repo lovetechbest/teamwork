@@ -9,3 +9,6 @@
 
 /* Projects card */
 @import './dash/projects.css';
+
+/* User Management card */
+@import './dash/user-management.css';

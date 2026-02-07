@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { signUp } from '../store/auth/authActions';
+import { isHighman } from '../utils/roles';
 
 const SignInPage = ({ onSignUpSuccess }) => {
   const [name, setName] = useState('');
@@ -40,7 +41,7 @@ const SignInPage = ({ onSignUpSuccess }) => {
       onSignUpSuccess?.();
 
       // Redirect based on role
-      if (role === 'Team Leader' || role === 'Manager') {
+      if (isHighman(role)) {
         navigate('/manager-dashboard');
       } else {
         navigate('/developer-dashboard');

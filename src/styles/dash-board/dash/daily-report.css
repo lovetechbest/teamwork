@@ -1,3 +1,10 @@
+.daily-report-error {
+  font-size: 12px;
+  color: #facc15;
+  margin: 0 0 8px 0;
+  flex: 1 1 100%;
+}
+
 .daily-report-content {
   display: flex;
   gap: 20px;

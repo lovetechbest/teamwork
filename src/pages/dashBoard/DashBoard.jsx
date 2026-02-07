@@ -4,6 +4,7 @@ import DailyReport from './eachElement/DailyReport';
 import Clients from './eachElement/Clients';
 import Projects from './eachElement/Projects';
 import Profit from './eachElement/Profit';
+import UserManagement from './eachElement/UserManagement';
 
 export default function ManagerDashboard() {
   return (
@@ -22,6 +23,9 @@ export default function ManagerDashboard() {
         </Link>
         <Link to="/profit" className="link-element">
           <Profit />
+        </Link>
+        <Link to="/user-management" className="link-element">
+          <UserManagement />
         </Link>
       </div>
     </section>

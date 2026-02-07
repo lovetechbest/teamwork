@@ -10,6 +10,8 @@ import ManagerDailyReportPage from '../features/dailyReport/ManagerDailyReportPa
 import ProjectsPage from '../features/projects/ProjectsPage';
 import ProfitPage from '../features/profit/ProfitPage';
 import ManagerProfitPage from '../features/profit/ManagerProfitPage';
+import UserManagementPage from '../features/users/UserManagementPage';
+import { isHighman } from '../utils/roles';
 
 import Header from '../components/Header';
 import FooterCards from '../components/FooterCards';
@@ -18,7 +20,7 @@ import ErrorBoundary from '../components/ErrorBoundary';
 const Pages = () => {
   const { role } = useSelector(state => state.auth);
   const userRole = role || sessionStorage.getItem("userRole");
-  const isManager = userRole && ['team leader', 'manager', 'teamleader'].includes(String(userRole).toLowerCase());
+  const isManager = isHighman(userRole);
 
   return (
     <div>
@@ -59,6 +61,14 @@ const Pages = () => {
               isManager ? 
                 <ManagerProfitPage /> : 
                 <ProfitPage />
+            } 
+          />
+          <Route 
+            path="/user-management" 
+            element={
+              isManager ? 
+                <UserManagementPage /> : 
+                <Navigate to="/developer-dashboard" replace />
             } 
           />
           <Route 

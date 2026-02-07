@@ -22,14 +22,15 @@ export const login = (username, password) => async (dispatch) => {
       
       let userRole = res.data.user?.role || 
                      res.data.role ||
-                     res.data.user?.userRole;
+                     res.data.user?.userRole ||
+                     res.data.userRole;
       
-      if (!userId && res.data.accessToken) {
+      if (!userId || !userRole) {
         try {
-          const tokenParts = res.data.accessToken.split('.');
+          const tokenParts = (res.data.accessToken || res.data.token || '').split('.');
           if (tokenParts.length === 3) {
             const payload = JSON.parse(atob(tokenParts[1]));
-            userId = payload.id || payload.userId || payload.userID || payload.sub;
+            userId = userId || payload.id || payload.userId || payload.userID || payload.sub;
             userRole = userRole || payload.role || payload.userRole;
           }
         } catch (e) {

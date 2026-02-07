@@ -1,4 +1,5 @@
 import api from "../../api";
+import { fetchUsers } from "../users/userActions";
 
 /**
  * Fetch server's current day (YYYY-MM-DD). Use for "today" - matches server.
@@ -282,6 +283,67 @@ export const fetchReportHistory = async (forUserId, daysBack = 90, serverToday =
       .sort((a, b) => new Date(b.date) - new Date(a.date));
   } catch (err) {
     return [];
+  }
+};
+
+/**
+ * Fetch reported/not-reported counts for a given date. For highman dashboard.
+ * Uses getReports response: if backend returns { users: [...] }, each user has reports[].
+ * Otherwise falls back to: totalUsers from fetchUsers, reportedCount from unique reporters.
+ */
+export const fetchDailyReportStats = async (date) => {
+  const accessToken = sessionStorage.getItem("accessToken");
+  if (!accessToken) return { reportedCount: 0, notReportedCount: 0 };
+
+  const apiDate = toApiDate(date);
+  let data;
+  let reportedCount = 0;
+
+  try {
+    const res = await api.get("/dayreports/getReports", {
+      params: { startDate: apiDate, endDate: apiDate },
+    });
+    data = res?.data;
+  } catch (err) {
+    const status = err?.response?.status;
+    if (status === 403) {
+      throw new Error("Access denied (403) on getReports. Backend may restrict Team Leader.");
+    }
+    throw err;
+  }
+
+  // Backend returns { users: [{ userId, userName, reports: [...] }] } - all team members
+  if (data?.users && Array.isArray(data.users)) {
+    const totalUsers = data.users.length;
+    reportedCount = data.users.filter(
+      (u) => (u.reports || []).length > 0
+    ).length;
+    const notReportedCount = totalUsers - reportedCount;
+    return { reportedCount, notReportedCount };
+  }
+
+  // Fallback: reports array only - we have reported count, need total from users API
+  const reports = Array.isArray(data)
+    ? data
+    : data?.reports || data?.data || [];
+  const getReportUserId = (r) => {
+    if (typeof r.user === "object") return r.user?._id || r.user?.id || r.user?.uniqueID;
+    return r.user || r.userId || r.user_id;
+  };
+  const uniqueReporters = new Set(
+    reports.map(getReportUserId).filter(Boolean)
+  );
+  reportedCount = uniqueReporters.size;
+
+  try {
+    const users = await fetchUsers();
+    const totalUsers = users.length;
+    const notReportedCount = Math.max(0, totalUsers - reportedCount);
+    return { reportedCount, notReportedCount };
+  } catch (err) {
+    throw new Error(
+      err?.message || "Report stats need get-users. Backend may restrict Team Leader."
+    );
   }
 };
 

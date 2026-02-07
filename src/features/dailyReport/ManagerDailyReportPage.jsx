@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useDispatch } from 'react-redux';
 import { useManagerDailyReports } from './hooks/useManagerDailyReports';
 import { useDailyReport } from './hooks/useDailyReport';
 import { deleteDailyReports, submitDailyReport, updateDailyReport, fetchReportForDate, getServerDay, normalizeDate } from '../../store/reports/reportActions';
 import ReportForm from './components/ReportForm';
 import ReportList from './components/ReportList';
-import { FaUsers, FaTrash, FaFilter, FaUser } from 'react-icons/fa';
+import { FaUsers, FaTrash, FaFilter, FaUser, FaSearchPlus } from 'react-icons/fa';
 import './DailyReportPage.css';
 import './ManagerDailyReportPage.css';
 
@@ -41,6 +42,7 @@ const ManagerDailyReportPage = () => {
   const { reports, loading, error, refreshReports } = useManagerDailyReports(apiFilters);
   const [deleting, setDeleting] = useState(null);
   const [myReportCollapsed, setMyReportCollapsed] = useState(false);
+  const [expandedReport, setExpandedReport] = useState(null);
 
   const {
     today,
@@ -234,13 +236,21 @@ const ManagerDailyReportPage = () => {
           ) : (
             <div className="manager-reports-grid">
               {flatReports.map((r) => (
-                <div key={r.id} className="report-card">
+                <div
+                  key={r.id}
+                  className="report-card"
+                  onClick={() => setExpandedReport(r)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && setExpandedReport(r)}
+                  title="Click to view full report"
+                >
                   <div className="report-card-header">
                     <span className="report-card-user">{r.userName}</span>
                     <span className="report-card-date">{r.date}</span>
                     <button
                       className="report-card-delete"
-                      onClick={() => handleDelete(r.id)}
+                      onClick={(e) => { e.stopPropagation(); handleDelete(r.id); }}
                       disabled={deleting === r.id}
                       title="Delete"
                     >
@@ -256,10 +266,35 @@ const ManagerDailyReportPage = () => {
                     </div>
                   )}
                   <p className="report-card-text">{r.text}</p>
+                  <div className="report-card-expand-hint">
+                    <FaSearchPlus /> View full report
+                  </div>
                 </div>
               ))}
             </div>
           )}
+
+      {expandedReport && createPortal(
+        <div className="modal-overlay report-expand-modal-overlay" onClick={() => setExpandedReport(null)}>
+          <div className="report-expand-modal" onClick={e => e.stopPropagation()}>
+            <div className="report-expand-header">
+              <h3>{expandedReport.userName}</h3>
+              <span className="report-expand-date">{expandedReport.date}</span>
+              <button className="report-expand-close" onClick={() => setExpandedReport(null)}>×</button>
+            </div>
+            {(expandedReport.createdAt || expandedReport.updatedAt) && (
+              <div className="report-expand-meta">
+                {expandedReport.createdAt && <span>Created: {formatDateTime(expandedReport.createdAt)}</span>}
+                {expandedReport.updatedAt && expandedReport.createdAt && new Date(expandedReport.updatedAt).getTime() !== new Date(expandedReport.createdAt).getTime() && (
+                  <span>Updated: {formatDateTime(expandedReport.updatedAt)}</span>
+                )}
+              </div>
+            )}
+            <div className="report-expand-text">{expandedReport.text}</div>
+          </div>
+        </div>,
+        document.body
+      )}
         </main>
       </div>
     </div>

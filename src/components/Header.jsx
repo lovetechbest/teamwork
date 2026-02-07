@@ -11,20 +11,23 @@ import {
   FaChartLine,
   FaSignOutAlt,
   FaCoins,
-  FaGem,
-  FaUserEdit
+  FaUserEdit,
+  FaUserCog
 } from 'react-icons/fa';
+import { isHighman } from '../utils/roles';
 
 export default function Header({ onPageChange }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { userId, role } = useSelector((state) => state.auth);
+  const userRole = role || sessionStorage.getItem("userRole");
+  const isHighmanUser = isHighman(userRole);
   const [showChangeUserInfo, setShowChangeUserInfo] = useState(false);
   const [name, setName] = useState('');
   const [userID, setUserID] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [userRole, setUserRole] = useState('');
+  const [editRole, setEditRole] = useState('');
   const [error, setError] = useState('');
   const handleLogout = async () => {
     await dispatch(logout());
@@ -42,7 +45,7 @@ export default function Header({ onPageChange }) {
     setUserID('');
     setPassword('');
     setConfirmPassword('');
-    setUserRole('');
+    setEditRole('');
     setError('');
   };
 
@@ -63,7 +66,7 @@ export default function Header({ onPageChange }) {
         name: name || undefined,
         userID: userID || undefined,
         password: password || undefined,
-        role: userRole || undefined,
+        role: editRole || undefined,
       }));
       handleCloseChangeUserInfo();
     } catch (err) {
@@ -74,9 +77,9 @@ export default function Header({ onPageChange }) {
   return (
     <header className="top-header">
       <NavLink to="/dashboard" className="logo">
-        <FaCoins className="logo-icon coin-1" />
-        <FaGem className="logo-icon gem-icon" />
-        <FaCoins className="logo-icon coin-2" />
+        <span className="logo-icon-wrap">
+          <FaCoins className="logo-icon" aria-hidden="true" />
+        </span>
         <span className="logo-text">Money Spinner</span>
       </NavLink>
       <nav className="top-nav">
@@ -100,17 +103,25 @@ export default function Header({ onPageChange }) {
           <FaChartLine className="nav-icon" />
           Profit
         </NavLink>
-        <button onClick={handleOpenChangeUserInfo} className="nav-link change-userinfo-button" type="button">
-          <FaUserEdit className="nav-icon" />
-          Change UserInfo
-        </button>
+        {isHighmanUser && (
+          <NavLink to="/user-management" className="nav-link">
+            <FaUserCog className="nav-icon" />
+            User Management
+          </NavLink>
+        )}
+        {!isHighmanUser && (
+          <button onClick={handleOpenChangeUserInfo} className="nav-link change-userinfo-button" type="button">
+            <FaUserEdit className="nav-icon" />
+            Change UserInfo
+          </button>
+        )}
         <button onClick={handleLogout} className="logout-button">
           <FaSignOutAlt className="nav-icon" />
           Logout
         </button>
       </nav>
 
-      {showChangeUserInfo && createPortal(
+      {showChangeUserInfo && !isHighmanUser && createPortal(
         <div className="modal-overlay" onClick={handleCloseChangeUserInfo}>
           <div className="modal-content change-userinfo-modal" onClick={e => e.stopPropagation()}>
             <h3>Change User Info</h3>
@@ -154,7 +165,7 @@ export default function Header({ onPageChange }) {
               </div>
               <div className="form-group">
                 <label>Role:</label>
-                <select value={userRole} onChange={e => setUserRole(e.target.value)}>
+                <select value={editRole} onChange={e => setEditRole(e.target.value)}>
                   <option value="">Keep current</option>
                   <option value="Developer">Developer</option>
                   <option value="Team Leader">Team Leader</option>
