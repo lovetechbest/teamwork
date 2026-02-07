@@ -43,7 +43,7 @@ export const useDailyReport = (options = {}) => {
         if (report) {
           todayText = report.main_content || report.content || report.text || '';
           hasTodayReport = true;
-          const newReport = { id: Date.now(), reportId: report._id || report.id, date: serverToday, text: todayText };
+          const newReport = { id: Date.now(), reportId: report._id || report.id, date: serverToday, text: todayText, createdAt: report.createdAt, updatedAt: report.updatedAt };
           const filtered = (history.length > 0 ? history : []).filter(r => r.date !== serverToday);
           mergedReports = [newReport, ...filtered];
         } else if (history.length > 0) {
@@ -93,9 +93,9 @@ export const useDailyReport = (options = {}) => {
     setIsEditingToday(true);
   };
 
-  const addReport = (text, reportId) => {
+  const addReport = (text, reportId, createdAt = null, updatedAt = null) => {
     if (!today) return;
-    const newReport = { id: Date.now(), reportId, date: today, text };
+    const newReport = { id: Date.now(), reportId, date: today, text, createdAt, updatedAt };
     setReports(prev => [newReport, ...prev.filter(r => r.date !== today)]);
     setIsEditingToday(false);
     setErrorMessage('');

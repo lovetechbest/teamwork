@@ -275,6 +275,8 @@ export const fetchReportHistory = async (forUserId, daysBack = 90, serverToday =
         reportId: r._id || r.id,
         date: normalizeDate(r.date || r.reportDate),
         text: r.main_content || r.content || r.text,
+        createdAt: r.createdAt,
+        updatedAt: r.updatedAt,
       }))
       .filter((r) => r.date)
       .sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -300,12 +302,10 @@ export const fetchAllDailyReports = (params = {}) => async (dispatch) => {
 
     // Map frontend params to backend API params (YYYY-M-D format)
     const apiParams = {};
-    if (params.startDate) {
-      apiParams.startDate = toApiDate(params.startDate);
-    }
-    if (params.endDate) {
-      apiParams.endDate = toApiDate(params.endDate);
-    }
+    if (params.startDate) apiParams.startDate = toApiDate(params.startDate);
+    if (params.endDate) apiParams.endDate = toApiDate(params.endDate);
+    if (params.date) apiParams.date = toApiDate(params.date);
+    if (params.filter_userUniqueID) apiParams.filter_userUniqueID = params.filter_userUniqueID;
 
     const res = await api.get("/dayreports/getReports", { params: apiParams });
     const data = res.data;

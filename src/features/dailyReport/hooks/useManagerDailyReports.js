@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchAllDailyReports } from '../../../store/reports/reportActions';
 
-export const useManagerDailyReports = (dateRange = {}) => {
+export const useManagerDailyReports = (filters = {}) => {
   const dispatch = useDispatch();
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,8 +15,10 @@ export const useManagerDailyReports = (dateRange = {}) => {
       
       try {
         const params = {};
-        if (dateRange.startDate) params.startDate = dateRange.startDate;
-        if (dateRange.endDate) params.endDate = dateRange.endDate;
+        if (filters.startDate) params.startDate = filters.startDate;
+        if (filters.endDate) params.endDate = filters.endDate;
+        if (filters.date) params.date = filters.date;
+        if (filters.filter_userUniqueID) params.filter_userUniqueID = filters.filter_userUniqueID;
         
         const data = await dispatch(fetchAllDailyReports(params));
         if (data && Array.isArray(data)) {
@@ -38,7 +40,7 @@ export const useManagerDailyReports = (dateRange = {}) => {
     
     const interval = setInterval(loadReports, 60000);
     return () => clearInterval(interval);
-  }, [dispatch, dateRange.startDate, dateRange.endDate]);
+  }, [dispatch, filters.startDate, filters.endDate, filters.date, filters.filter_userUniqueID]);
 
   const refreshReports = async () => {
     setLoading(true);
@@ -46,8 +48,10 @@ export const useManagerDailyReports = (dateRange = {}) => {
     
     try {
       const params = {};
-      if (dateRange.startDate) params.startDate = dateRange.startDate;
-      if (dateRange.endDate) params.endDate = dateRange.endDate;
+      if (filters.startDate) params.startDate = filters.startDate;
+      if (filters.endDate) params.endDate = filters.endDate;
+      if (filters.date) params.date = filters.date;
+      if (filters.filter_userUniqueID) params.filter_userUniqueID = filters.filter_userUniqueID;
       
       const data = await dispatch(fetchAllDailyReports(params));
       if (data && Array.isArray(data)) {

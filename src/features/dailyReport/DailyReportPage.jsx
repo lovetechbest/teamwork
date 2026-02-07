@@ -96,7 +96,7 @@ const DailyReportPage = () => {
               result = await dispatch(updateDailyReport(fetchedId, payload));
             }
             if (result) {
-              addReport(reportText, result._id || result.id);
+              addReport(reportText, result._id || result.id, result.createdAt, result.updatedAt);
               return;
             }
           }
@@ -109,7 +109,7 @@ const DailyReportPage = () => {
         return;
       }
 
-      addReport(reportText, result._id || result.id);
+      addReport(reportText, result._id || result.id, result.createdAt, result.updatedAt);
     } catch (error) {
       const errorMsg = error.message || "Failed to submit report. Please try again.";
       setErrorMessage(errorMsg);
@@ -141,6 +141,7 @@ const DailyReportPage = () => {
         reports={reports}
         today={today}
         onModify={enableModify}
+        showTimestamps
       />
     </div>
   );

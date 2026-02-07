@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { NavLink, useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { logout, changeUserInfo } from '../store/auth/authActions';
 import { 
   FaHome, 
@@ -18,10 +18,13 @@ import {
 export default function Header({ onPageChange }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { userId, role } = useSelector((state) => state.auth);
   const [showChangeUserInfo, setShowChangeUserInfo] = useState(false);
-  const [username, setUsername] = useState('');
+  const [name, setName] = useState('');
+  const [userID, setUserID] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [userRole, setUserRole] = useState('');
   const [error, setError] = useState('');
   const handleLogout = async () => {
     await dispatch(logout());
@@ -35,25 +38,33 @@ export default function Header({ onPageChange }) {
 
   const handleCloseChangeUserInfo = () => {
     setShowChangeUserInfo(false);
-    setUsername('');
+    setName('');
+    setUserID('');
     setPassword('');
     setConfirmPassword('');
+    setUserRole('');
     setError('');
   };
 
   const handleChangeUserInfoSubmit = async (e) => {
     e.preventDefault();
-    if (!username || !password || !confirmPassword) {
-      setError('Please fill User ID, password and confirm password.');
+    if (!name && !userID && !password) {
+      setError('Please fill at least one field to update.');
       return;
     }
-    if (password !== confirmPassword) {
+    if (password && password !== confirmPassword) {
       setError('Passwords do not match!');
       return;
     }
     setError('');
     try {
-      await dispatch(changeUserInfo({ username, password, confirmPassword }));
+      await dispatch(changeUserInfo({
+        id: userId || sessionStorage.getItem('userId'),
+        name: name || undefined,
+        userID: userID || undefined,
+        password: password || undefined,
+        role: userRole || undefined,
+      }));
       handleCloseChangeUserInfo();
     } catch (err) {
       setError(err.message);
@@ -106,19 +117,28 @@ export default function Header({ onPageChange }) {
             {error && <p className="error-text">{error}</p>}
             <form onSubmit={handleChangeUserInfoSubmit}>
               <div className="form-group">
+                <label>Name:</label>
+                <input
+                  type="text"
+                  placeholder="Your name"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
                 <label>User ID:</label>
                 <input
                   type="text"
-                  placeholder="User ID"
-                  value={username}
-                  onChange={e => setUsername(e.target.value)}
+                  placeholder="Email or username"
+                  value={userID}
+                  onChange={e => setUserID(e.target.value)}
                 />
               </div>
               <div className="form-group">
                 <label>Password:</label>
                 <input
                   type="password"
-                  placeholder="Password"
+                  placeholder="New password"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                 />
@@ -127,10 +147,19 @@ export default function Header({ onPageChange }) {
                 <label>Confirm Password:</label>
                 <input
                   type="password"
-                  placeholder="Confirm Password"
+                  placeholder="Confirm password"
                   value={confirmPassword}
                   onChange={e => setConfirmPassword(e.target.value)}
                 />
+              </div>
+              <div className="form-group">
+                <label>Role:</label>
+                <select value={userRole} onChange={e => setUserRole(e.target.value)}>
+                  <option value="">Keep current</option>
+                  <option value="Developer">Developer</option>
+                  <option value="Team Leader">Team Leader</option>
+                  <option value="Manager">Manager</option>
+                </select>
               </div>
               <div className="modal-actions">
                 <button type="submit">Update</button>

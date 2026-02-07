@@ -99,26 +99,39 @@ export const signUp = ({ name, username, password, confirmPassword, role }) => a
   }
 };
 
-export const changeUserInfo = ({ username, password, confirmPassword }) => async (dispatch) => {
+export const changeUserInfo = ({ id, name, userID, password, role }) => async (dispatch) => {
   dispatch({ type: "CHANGE_USERINFO_REQUEST" });
 
   try {
-    const res = await api.post("/auth/updateUserInfo", {
-      userID: username,
-      password,
-      confirmPassword,
-    });
+    const userId = id || sessionStorage.getItem("userId");
+    if (!userId) throw new Error("User ID not found. Please login again.");
 
-    if (res.data?.accessToken) {
-      sessionStorage.setItem("accessToken", res.data.accessToken);
-      const userId = res.data.user?.uniqueID || res.data.user?.id || res.data.userID;
-      if (userId) sessionStorage.setItem("userId", userId);
-      dispatch({ type: "LOGIN_SUCCESS", payload: { ...res.data, userId } });
+    const body = {};
+    if (name != null) body.name = name;
+    if (userID != null) body.userID = userID;
+    if (password) body.password = password;
+    if (role != null) body.role = role;
+
+    const res = await api.put(`/users/update/${userId}`, body);
+
+    if (res.data?.user) {
+      const updatedUser = res.data.user;
+      const newUserId = updatedUser.uniqueID || updatedUser._id || updatedUser.id || userId;
+      const newRole = updatedUser.role || res.data.role;
+      if (newUserId) sessionStorage.setItem("userId", newUserId);
+      if (newRole) sessionStorage.setItem("userRole", newRole);
+      dispatch({ type: "LOGIN_SUCCESS", payload: { ...res.data, userId: newUserId, role: newRole } });
     }
 
     return res.data;
   } catch (err) {
-    const message = err.response?.data?.message || "Failed to update user info";
+    const data = err.response?.data;
+    const message =
+      data?.message ||
+      data?.error ||
+      (typeof data === "string" ? data : null) ||
+      err.message ||
+      "Failed to update user info";
     dispatch({ type: "CHANGE_USERINFO_FAIL", payload: message });
     throw new Error(message);
   }
