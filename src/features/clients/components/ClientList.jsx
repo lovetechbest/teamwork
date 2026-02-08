@@ -13,12 +13,12 @@ const ClientList = ({ clients, onModify, onDelete }) => {
 
   return (
     <div className="clients-list">
-      {clients.map((client, index) => (
+      {clients.map((client) => (
         <ClientCard
-          key={index}
+          key={client._id}
           client={client}
-          onModify={() => onModify(index)}
-          onDelete={() => onDelete(index)}
+          onModify={() => onModify(client._id)}
+          onDelete={() => onDelete(client._id)}
         />
       ))}
     </div>

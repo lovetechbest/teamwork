@@ -9,8 +9,8 @@ import {
   FaUsers, 
   FaFolder, 
   FaChartLine,
+  FaEuroSign,
   FaSignOutAlt,
-  FaCoins,
   FaUserEdit,
   FaUserCog
 } from 'react-icons/fa';
@@ -78,7 +78,7 @@ export default function Header({ onPageChange }) {
     <header className="top-header">
       <NavLink to="/dashboard" className="logo">
         <span className="logo-icon-wrap">
-          <FaCoins className="logo-icon" aria-hidden="true" />
+          <FaEuroSign className="logo-icon" aria-hidden="true" />
         </span>
         <span className="logo-text">Money Spinner</span>
       </NavLink>

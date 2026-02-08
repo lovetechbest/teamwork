@@ -48,7 +48,7 @@
   letter-spacing: 0.3px;
 }
 
-.form-field input,
+.form-field input:not([type="radio"]),
 .form-field textarea {
   width: 100%;
   padding: 14px 18px;
@@ -67,7 +67,59 @@
   resize: vertical;
 }
 
-.form-field input:focus,
+.radio-group {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.client-form-container .radio-option input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  margin: 0;
+  margin-right: 14px;
+  padding: 0;
+  border: 2px solid var(--border);
+  border-radius: 50% !important;
+  background: var(--panel-2) !important;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: border-color 0.2s, background 0.2s;
+  box-sizing: border-box;
+}
+
+.client-form-container .radio-option input[type="radio"]:hover {
+  border-color: var(--accent);
+}
+
+.client-form-container .radio-option input[type="radio"]:checked {
+  border-color: var(--accent) !important;
+  background: var(--accent) !important;
+}
+
+.client-form-container .radio-option input[type="radio"]:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.form-field input:not([type="radio"]):focus,
 .form-field textarea:focus {
   outline: none;
   border-color: var(--accent);

@@ -30,53 +30,52 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
-  background: linear-gradient(145deg, rgba(255, 215, 0, 0.25), rgba(255, 193, 7, 0.12));
-  border-radius: 12px;
-  border: 1px solid rgba(255, 215, 0, 0.35);
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(145deg, rgba(74, 222, 128, 0.2), rgba(34, 197, 94, 0.1));
+  border-radius: 10px;
+  border: 1px solid rgba(74, 222, 128, 0.4);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.25),
-    0 4px 20px rgba(255, 215, 0, 0.2);
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 4px 16px rgba(34, 197, 94, 0.25);
   transition: all 0.35s ease;
 }
 
 .logo-icon {
-  font-size: 22px;
-  color: #ffd700;
-  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.7));
+  font-size: 24px;
+  color: #4ade80;
+  filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.5));
   transition: all 0.35s ease;
 }
 
 .top-header .logo:hover .logo-icon-wrap {
-  transform: scale(1.08);
+  transform: scale(1.05) translateY(-1px);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    0 6px 28px rgba(255, 215, 0, 0.35);
-  border-color: rgba(255, 215, 0, 0.5);
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 6px 24px rgba(34, 197, 94, 0.35);
+  border-color: rgba(74, 222, 128, 0.6);
 }
 
 .top-header .logo:hover .logo-icon {
-  filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.9));
+  filter: drop-shadow(0 0 12px rgba(74, 222, 128, 0.7));
 }
 
 .logo-text {
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
   display: inline-block;
-  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 35%, #ffd700 70%, #ffec8b 100%);
-  background-size: 200% auto;
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 40%, #16a34a 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   transition: all 0.4s ease;
-  text-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+  text-shadow: 0 0 60px rgba(74, 222, 128, 0.25);
 }
 
 .top-header .logo:hover .logo-text {
-  background-position: 100% 0;
+  filter: brightness(1.15);
 }
 
 .top-nav {

@@ -6,9 +6,6 @@ const ProjectForm = ({ onSubmit }) => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
 
   const handleFormSubmit = (data) => {
-    if (!Array.isArray(data.techStack)) {
-      data.techStack = [data.techStack];
-    }
     onSubmit(data);
     reset();
   };
@@ -29,14 +26,14 @@ const ProjectForm = ({ onSubmit }) => {
         </div>
 
         <div className="form-field">
-          <label htmlFor="country">Country</label>
+          <label htmlFor="companyOrPerson">Company or Person</label>
           <input
             type="text"
-            id="country"
-            {...register('country', { required: 'Country is required' })}
-            placeholder="Enter country"
+            id="companyOrPerson"
+            {...register('companyOrPerson', { required: 'Company or person is required' })}
+            placeholder="Enter company or person name"
           />
-          {errors.country && <span className="error">{errors.country.message}</span>}
+          {errors.companyOrPerson && <span className="error">{errors.companyOrPerson.message}</span>}
         </div>
 
         <div className="form-field">
@@ -51,23 +48,6 @@ const ProjectForm = ({ onSubmit }) => {
             placeholder="Enter project budget"
           />
           {errors.budget && <span className="error">{errors.budget.message}</span>}
-        </div>
-
-        <div className="form-field">
-          <label htmlFor="tech-stack">Technology Stack</label>
-          <select
-            id="tech-stack"
-            {...register('techStack', { required: 'At least one technology is required' })}
-            multiple
-          >
-            <option value="React">React</option>
-            <option value="Node.js">Node.js</option>
-            <option value="Vue">Vue</option>
-            <option value="Angular">Angular</option>
-            <option value="Python">Python</option>
-            <option value="Java">Java</option>
-          </select>
-          {errors.techStack && <span className="error">{errors.techStack.message}</span>}
         </div>
 
         <div className="form-field">

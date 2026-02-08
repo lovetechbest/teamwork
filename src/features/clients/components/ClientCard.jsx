@@ -6,7 +6,8 @@ const ClientCard = ({ client, onModify, onDelete }) => {
     <div className="client-card">
       <h3>{client.name}</h3>
       <p><strong>Email:</strong> {client.email}</p>
-      <p><strong>Company:</strong> {client.company}</p>
+      <p><strong>Country:</strong> {client.country}</p>
+      <p><strong>Status:</strong> {client.status === 'Active' ? 'Active now' : client.status === 'Pending' ? 'Needs care' : client.status || 'Active now'}</p>
       <p><strong>Description:</strong> {client.description}</p>
       <div className="card-buttons">
         <button 

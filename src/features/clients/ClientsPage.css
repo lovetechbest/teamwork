@@ -1,5 +1,124 @@
 .clients-page {
-  padding: 30px 20px;
-  max-width: 1200px;
+  padding: 20px 16px;
+  max-width: 1400px;
   margin: 0 auto;
+}
+
+.clients-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: var(--panel);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.clients-filter-users {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.clients-filters .filter-label {
+  margin-right: 4px;
+  font-weight: 600;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.clients-filters .user-chip {
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.clients-filters .user-chip:hover,
+.clients-filters .user-chip.active {
+  border-color: var(--accent);
+  background: rgba(108, 124, 255, 0.15);
+  color: var(--accent);
+}
+
+.clients-filter-country {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clients-filters .filter-input {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  font-size: 13px;
+  width: 140px;
+}
+
+.clients-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.clients-form-col {
+  flex: 0 0 340px;
+}
+
+.clients-form-col .client-form-container {
+  max-width: none;
+  margin: 0;
+  padding: 20px;
+}
+
+.clients-form-col .client-form-container .form-field {
+  margin-bottom: 14px;
+}
+
+.clients-form-col .client-form-container h2 {
+  margin-bottom: 20px;
+  font-size: 22px;
+}
+
+.clients-list-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.clients-list-col .clients-list {
+  margin-top: 0;
+}
+
+@media (max-width: 900px) {
+  .clients-layout {
+    flex-direction: column;
+  }
+
+  .clients-form-col {
+    flex: none;
+    width: 100%;
+  }
+}
+
+.clients-error {
+  color: #ff4757;
+  padding: 10px 16px;
+  background: rgba(255, 71, 87, 0.1);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.clients-loading {
+  color: var(--text);
+  opacity: 0.8;
+  padding: 20px;
 }

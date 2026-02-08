@@ -4,26 +4,41 @@ import './ClientForm.css';
 
 const ClientForm = ({ onSubmit, onCancel, editingIndex, defaultValues }) => {
   const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm({
-    defaultValues: defaultValues || {}
+    defaultValues: { status: 'Active', ...(defaultValues || {}) },
+    mode: 'onTouched',
   });
 
+  const formFields = ['name', 'email', 'country', 'status', 'description'];
   useEffect(() => {
     if (defaultValues) {
-      Object.keys(defaultValues).forEach(key => {
-        setValue(key, defaultValues[key]);
+      formFields.forEach(key => {
+        if (defaultValues[key] != null) setValue(key, defaultValues[key]);
       });
     }
   }, [defaultValues, setValue]);
 
-  const handleFormSubmit = (data) => {
-    onSubmit(data);
-    reset();
+  const onFormSubmit = (e) => {
+    e.preventDefault();
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        handleSubmit(handleFormSubmit)(e);
+      });
+    });
+  };
+
+  const handleFormSubmit = async (data) => {
+    try {
+      await onSubmit(data);
+      reset();
+    } catch (err) {
+      // Error surfaced by parent; form stays filled for retry
+    }
   };
 
   return (
     <div className="client-form-container">
       <h2>{editingIndex !== null ? 'Modify Client' : 'Add Client'}</h2>
-      <form onSubmit={handleSubmit(handleFormSubmit)}>
+      <form onSubmit={onFormSubmit}>
         <div className="form-field">
           <label htmlFor="name">Client Name</label>
           <input
@@ -39,19 +54,35 @@ const ClientForm = ({ onSubmit, onCancel, editingIndex, defaultValues }) => {
           <input
             type="email"
             id="email"
+            autoComplete="email"
             {...register('email', { required: 'Email is required' })}
           />
           {errors.email && <span className="error">{errors.email.message}</span>}
         </div>
 
         <div className="form-field">
-          <label htmlFor="company">Company</label>
+          <label htmlFor="country">Country</label>
           <input
             type="text"
-            id="company"
-            {...register('company', { required: 'Company is required' })}
+            id="country"
+            {...register('country', { required: 'Country is required' })}
           />
-          {errors.company && <span className="error">{errors.company.message}</span>}
+          {errors.country && <span className="error">{errors.country.message}</span>}
+        </div>
+
+        <div className="form-field">
+          <label>Status</label>
+          <div className="radio-group">
+            <label className="radio-option">
+              <input type="radio" value="Active" {...register('status', { required: 'Please select a status' })} />
+              <span>Active now</span>
+            </label>
+            <label className="radio-option">
+              <input type="radio" value="Pending" {...register('status', { required: 'Please select a status' })} />
+              <span>Needs care</span>
+            </label>
+          </div>
+          {errors.status && <span className="error">{errors.status.message}</span>}
         </div>
 
         <div className="form-field">
