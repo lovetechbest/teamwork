@@ -37,27 +37,53 @@ const ProjectForm = ({ onSubmit }) => {
         </div>
 
         <div className="form-field">
-          <label htmlFor="budget">Budget</label>
-          <input
-            type="number"
-            id="budget"
-            {...register('budget', { 
-              required: 'Budget is required', 
-              min: { value: 0, message: 'Budget must be positive' } 
-            })}
-            placeholder="Enter project budget"
+          <label htmlFor="summary">Summary</label>
+          <textarea
+            id="summary"
+            rows="4"
+            {...register('summary', { required: 'Summary is required' })}
+            placeholder="Enter project summary (milestones or budget or any other details)"
           />
-          {errors.budget && <span className="error">{errors.budget.message}</span>}
+          {errors.summary && <span className="error">{errors.summary.message}</span>}
         </div>
 
         <div className="form-field">
-          <label htmlFor="deadline">Deadline</label>
+          <label htmlFor="stack">Stack</label>
           <input
-            type="date"
-            id="deadline"
-            {...register('deadline', { required: 'Deadline is required' })}
+            type="text"
+            id="stack"
+            {...register('stack', { required: 'Stack is required' })}
+            placeholder="Enter technology stack"
           />
-          {errors.deadline && <span className="error">{errors.deadline.message}</span>}
+          {errors.stack && <span className="error">{errors.stack.message}</span>}
+        </div>
+
+        <div className="form-field">
+          <label htmlFor="githubUrl">GitHub URL</label>
+          <input
+            type="url"
+            id="githubUrl"
+            {...register('githubUrl', { 
+              required: 'GitHub URL is required',
+              pattern: {
+                value: /^https?:\/\/.+/,
+                message: 'Please enter a valid URL'
+              }
+            })}
+            placeholder="https://github.com/username/repo"
+          />
+          {errors.githubUrl && <span className="error">{errors.githubUrl.message}</span>}
+        </div>
+
+        <div className="form-field">
+          <label htmlFor="communicationApp">Communication App</label>
+          <input
+            type="text"
+            id="communicationApp"
+            {...register('communicationApp', { required: 'Communication app is required' })}
+            placeholder="e.g., Slack, Discord, Teams, Zoom"
+          />
+          {errors.communicationApp && <span className="error">{errors.communicationApp.message}</span>}
         </div>
 
         <button type="submit">Submit</button>
