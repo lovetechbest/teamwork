@@ -1,5 +1,7 @@
 import React from 'react';
+import { FaUsers, FaFileContract } from 'react-icons/fa';
 import { useClientStats } from '../../../features/clients/hooks/useClientStats';
+import '../../../styles/dash-board/dash/developer-daily-report.css';
 
 export default function Clients() {
   const { activeCount, needsContractCount, loading, error } = useClientStats();
@@ -10,14 +12,14 @@ export default function Clients() {
       <div className="daily-report-content">
         <img src="/dash-board/clients.png" alt="Clients" className="card-image" />
         {error && <p className="daily-report-error">{error}</p>}
-        <div className="daily-report-announcements">
-          <div className="announcement reported">
-            <div className="count">{loading ? '—' : activeCount}</div>
-            <div className="label">Active now</div>
+        <div className="daily-report-status">
+          <div className={`status-indicator reported`}>
+            <FaUsers className="status-icon check-icon" />
+            <div className="label">{loading ? '—' : activeCount} Active now</div>
           </div>
-          <div className="announcement not-reported">
-            <div className="count">{loading ? '—' : needsContractCount}</div>
-            <div className="label">Needs contract</div>
+          <div className={`status-indicator not-reported`}>
+            <FaFileContract className="status-icon no-check-icon" />
+            <div className="label">{loading ? '—' : needsContractCount} Needs contract</div>
           </div>
         </div>
       </div>

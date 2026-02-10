@@ -1,39 +1,71 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import './ProjectForm.css';
 
-const ProjectForm = ({ onSubmit }) => {
+const ProjectForm = ({ onSubmit, editingProject, onCancel }) => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
 
+  // Pre-fill form when editing
+  useEffect(() => {
+    if (editingProject) {
+      const stackValue = Array.isArray(editingProject.stack) 
+        ? editingProject.stack.join(', ') 
+        : editingProject.stack || '';
+      
+      reset({
+        name: editingProject.name || '',
+        CompanyOrClientName: editingProject.CompanyOrClientName || '',
+        summary: editingProject.summary || '',
+        stack: stackValue,
+        GitHubURL: editingProject.GitHubURL || '',
+        communicationApp: editingProject.communicationApp || '',
+      });
+    } else {
+      reset();
+    }
+  }, [editingProject, reset]);
+
   const handleFormSubmit = (data) => {
-    onSubmit(data);
-    reset();
+    // Transform form data to match API structure
+    const apiPayload = {
+      name: data.name,
+      CompanyOrClientName: data.CompanyOrClientName,
+      summary: data.summary,
+      stack: data.stack ? data.stack.split(',').map(s => s.trim()).filter(s => s) : [],
+      GitHubURL: data.GitHubURL,
+      communicationApp: data.communicationApp,
+    };
+    
+    onSubmit(apiPayload);
+    if (!editingProject) {
+      reset();
+    }
   };
 
   return (
     <div className="project-form-container">
-      <h2>Add Project</h2>
+      <h2>{editingProject ? 'Edit Project' : 'Add Project'}</h2>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="form-field">
-          <label htmlFor="project-name">Project Name</label>
+          <label htmlFor="name">Project Name</label>
           <input
             type="text"
-            id="project-name"
-            {...register('projectName', { required: 'Project name is required' })}
+            id="name"
+            {...register('name', { required: 'Project name is required' })}
             placeholder="Enter project name"
           />
-          {errors.projectName && <span className="error">{errors.projectName.message}</span>}
+          {errors.name && <span className="error">{errors.name.message}</span>}
         </div>
 
         <div className="form-field">
-          <label htmlFor="companyOrPerson">Company or Person</label>
+          <label htmlFor="CompanyOrClientName">Company or Client Name</label>
           <input
             type="text"
-            id="companyOrPerson"
-            {...register('companyOrPerson', { required: 'Company or person is required' })}
-            placeholder="Enter company or person name"
+            id="CompanyOrClientName"
+            {...register('CompanyOrClientName', { required: 'Company or client name is required' })}
+            placeholder="Enter company or client name"
           />
-          {errors.companyOrPerson && <span className="error">{errors.companyOrPerson.message}</span>}
+          {errors.CompanyOrClientName && <span className="error">{errors.CompanyOrClientName.message}</span>}
         </div>
 
         <div className="form-field">
@@ -42,7 +74,7 @@ const ProjectForm = ({ onSubmit }) => {
             id="summary"
             rows="4"
             {...register('summary', { required: 'Summary is required' })}
-            placeholder="Enter project summary (milestones or budget or any other details)"
+            placeholder="Enter project summary"
           />
           {errors.summary && <span className="error">{errors.summary.message}</span>}
         </div>
@@ -53,17 +85,17 @@ const ProjectForm = ({ onSubmit }) => {
             type="text"
             id="stack"
             {...register('stack', { required: 'Stack is required' })}
-            placeholder="Enter technology stack"
+            placeholder="e.g., React, Node.js, MongoDB (comma-separated)"
           />
           {errors.stack && <span className="error">{errors.stack.message}</span>}
         </div>
 
         <div className="form-field">
-          <label htmlFor="githubUrl">GitHub URL</label>
+          <label htmlFor="GitHubURL">GitHub URL</label>
           <input
             type="url"
-            id="githubUrl"
-            {...register('githubUrl', { 
+            id="GitHubURL"
+            {...register('GitHubURL', { 
               required: 'GitHub URL is required',
               pattern: {
                 value: /^https?:\/\/.+/,
@@ -72,7 +104,7 @@ const ProjectForm = ({ onSubmit }) => {
             })}
             placeholder="https://github.com/username/repo"
           />
-          {errors.githubUrl && <span className="error">{errors.githubUrl.message}</span>}
+          {errors.GitHubURL && <span className="error">{errors.GitHubURL.message}</span>}
         </div>
 
         <div className="form-field">
@@ -86,7 +118,14 @@ const ProjectForm = ({ onSubmit }) => {
           {errors.communicationApp && <span className="error">{errors.communicationApp.message}</span>}
         </div>
 
-        <button type="submit">Submit</button>
+        <div className="form-buttons">
+          <button type="submit">{editingProject ? 'Update' : 'Submit'}</button>
+          {onCancel && (
+            <button type="button" onClick={onCancel} className="cancel-button">
+              Cancel
+            </button>
+          )}
+        </div>
       </form>
     </div>
   );

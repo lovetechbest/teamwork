@@ -1,4 +1,5 @@
 import api from "../../api";
+import { setAccessToken, clearAccessToken } from "../../utils/tokenManager";
 
 export const login = (username, password) => async (dispatch) => {
   dispatch({ type: "LOGIN_REQUEST" });
@@ -10,7 +11,7 @@ export const login = (username, password) => async (dispatch) => {
     });
 
     if (res.data && res.data.accessToken) {
-      sessionStorage.setItem("accessToken", res.data.accessToken);
+      setAccessToken(res.data.accessToken);
       
       let userId = res.data.user?.uniqueID || 
                    res.data.user?._id || 
@@ -39,16 +40,16 @@ export const login = (username, password) => async (dispatch) => {
       }
       
       if (userId) {
-        sessionStorage.setItem("userId", userId);
+        localStorage.setItem("userId", userId);
       }
       
       if (userRole) {
-        sessionStorage.setItem("userRole", userRole);
+        localStorage.setItem("userRole", userRole);
       }
       
       dispatch({
         type: "LOGIN_SUCCESS",
-        payload: { ...res.data, userId, role: userRole },
+        payload: { ...res.data, userId, role: userRole, accessToken: res.data.accessToken },
       });
 
       return res.data;
@@ -84,7 +85,7 @@ export const signUp = ({ name, username, password, confirmPassword, role }) => a
     });
 
     if (role) {
-      sessionStorage.setItem("userRole", role);
+      localStorage.setItem("userRole", role);
     }
 
     dispatch({
@@ -104,7 +105,7 @@ export const changeUserInfo = ({ id, name, userID, password, role }) => async (d
   dispatch({ type: "CHANGE_USERINFO_REQUEST" });
 
   try {
-    const userId = id || sessionStorage.getItem("userId");
+    const userId = id || localStorage.getItem("userId");
     if (!userId) throw new Error("User ID not found. Please login again.");
 
     const body = {};
@@ -119,8 +120,8 @@ export const changeUserInfo = ({ id, name, userID, password, role }) => async (d
       const updatedUser = res.data.user;
       const newUserId = updatedUser.uniqueID || updatedUser._id || updatedUser.id || userId;
       const newRole = updatedUser.role || res.data.role;
-      if (newUserId) sessionStorage.setItem("userId", newUserId);
-      if (newRole) sessionStorage.setItem("userRole", newRole);
+      if (newUserId) localStorage.setItem("userId", newUserId);
+      if (newRole) localStorage.setItem("userRole", newRole);
       dispatch({ type: "LOGIN_SUCCESS", payload: { ...res.data, userId: newUserId, role: newRole } });
     }
 
@@ -138,6 +139,40 @@ export const changeUserInfo = ({ id, name, userID, password, role }) => async (d
   }
 };
 
+/**
+ * Refresh access token using refreshToken from httpOnly cookie
+ */
+export const refreshAccessToken = () => async (dispatch) => {
+  try {
+    const res = await api.get("/auth/refresh", {
+      withCredentials: true
+    });
+    
+    if (res.data?.accessToken) {
+      const accessToken = res.data.accessToken;
+      setAccessToken(accessToken);
+      
+      // Store in Redux state
+      dispatch({ 
+        type: "RESTORE_SESSION", 
+        payload: { 
+          token: accessToken, 
+          userId: res.data.userId || res.data.user?.id || res.data.user?._id,
+          role: res.data.role || res.data.user?.role 
+        } 
+      });
+      
+      return accessToken;
+    }
+    throw new Error("No access token in refresh response");
+  } catch (err) {
+    // Refresh failed - user needs to login
+    // LOGOUT action sets loading to false
+    dispatch({ type: "LOGOUT" });
+    return null;
+  }
+};
+
 export const logout = () => async (dispatch) => {
   try {
     // Send logout request to server
@@ -146,6 +181,7 @@ export const logout = () => async (dispatch) => {
     // Even if logout request fails, continue with local logout
   } finally {
     // Always dispatch logout action and clear local storage
+    clearAccessToken();
     dispatch({ type: "LOGOUT" });
   }
 };

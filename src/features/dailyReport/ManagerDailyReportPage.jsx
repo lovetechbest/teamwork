@@ -43,6 +43,7 @@ const ManagerDailyReportPage = () => {
   const [deleting, setDeleting] = useState(null);
   const [myReportCollapsed, setMyReportCollapsed] = useState(false);
   const [expandedReport, setExpandedReport] = useState(null);
+  const [expandedUsers, setExpandedUsers] = useState(new Set());
 
   const {
     today,
@@ -73,7 +74,39 @@ const ManagerDailyReportPage = () => {
     })
     .sort((a, b) => (new Date(b.date) || 0) - (new Date(a.date) || 0));
 
+  // Group reports by user
+  const reportsByUser = flatReports.reduce((acc, report) => {
+    const key = report.userId;
+    if (!acc[key]) {
+      acc[key] = {
+        userId: report.userId,
+        userName: report.userName,
+        reports: []
+      };
+    }
+    acc[key].reports.push(report);
+    return acc;
+  }, {});
+
+  const groupedUsers = Object.values(reportsByUser).sort((a, b) => {
+    const aLatest = a.reports[0]?.date || '';
+    const bLatest = b.reports[0]?.date || '';
+    return (new Date(bLatest) || 0) - (new Date(aLatest) || 0);
+  });
+
   const uniqueUsers = [...new Map(flatReports.map((r) => [r.userId, { userId: r.userId, userName: r.userName }])).values()];
+
+  const toggleUserExpanded = (userId) => {
+    setExpandedUsers(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(userId)) {
+        newSet.delete(userId);
+      } else {
+        newSet.add(userId);
+      }
+      return newSet;
+    });
+  };
 
   const handleReport = async () => {
     if (!today) return;
@@ -83,14 +116,7 @@ const ManagerDailyReportPage = () => {
     }
     let finalUserId = currentUserId;
     if (!finalUserId) {
-      const token = sessionStorage.getItem("accessToken");
-      if (token) {
-        try {
-          const payload = JSON.parse(atob(token.split(".")[1]));
-          finalUserId = payload.id || payload.userId || payload.userID || payload.sub;
-          if (finalUserId) sessionStorage.setItem("userId", finalUserId);
-        } catch (e) { /* ignore */ }
-      }
+      finalUserId = localStorage.getItem("userId");
     }
     if (!finalUserId) {
       alert("User ID not found. Please login again.");
@@ -231,46 +257,68 @@ const ManagerDailyReportPage = () => {
             <div className="loading-msg">Loading…</div>
           ) : error ? (
             <div className="error-msg">{error} <button onClick={refreshReports}>Retry</button></div>
-          ) : flatReports.length === 0 ? (
+          ) : groupedUsers.length === 0 ? (
             <div className="no-reports-msg">No reports in this period.</div>
           ) : (
             <div className="manager-reports-grid">
-              {flatReports.map((r) => (
-                <div
-                  key={r.id}
-                  className="report-card"
-                  onClick={() => setExpandedReport(r)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => e.key === 'Enter' && setExpandedReport(r)}
-                  title="Click to view full report"
-                >
-                  <div className="report-card-header">
-                    <span className="report-card-user">{r.userName}</span>
-                    <span className="report-card-date">{r.date}</span>
-                    <button
-                      className="report-card-delete"
-                      onClick={(e) => { e.stopPropagation(); handleDelete(r.id); }}
-                      disabled={deleting === r.id}
-                      title="Delete"
+              {groupedUsers.map((userGroup) => {
+                const isExpanded = expandedUsers.has(userGroup.userId);
+                const reportCount = userGroup.reports.length;
+                return (
+                  <div key={userGroup.userId} className="user-report-group">
+                    <div
+                      className="user-report-header"
+                      onClick={() => toggleUserExpanded(userGroup.userId)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => e.key === 'Enter' && toggleUserExpanded(userGroup.userId)}
                     >
-                      <FaTrash />
-                    </button>
-                  </div>
-                  {(r.createdAt || r.updatedAt) && (
-                    <div className="report-card-meta">
-                      {r.createdAt && <span>Created: {formatDateTime(r.createdAt)}</span>}
-                      {r.updatedAt && r.createdAt && new Date(r.updatedAt).getTime() !== new Date(r.createdAt).getTime() && (
-                        <span>Updated: {formatDateTime(r.updatedAt)}</span>
-                      )}
+                      <span className="user-report-name">{userGroup.userName}</span>
+                      <span className="user-report-count">{reportCount} report{reportCount !== 1 ? 's' : ''}</span>
+                      <span className="user-report-toggle">{isExpanded ? '▼' : '▶'}</span>
                     </div>
-                  )}
-                  <p className="report-card-text">{r.text}</p>
-                  <div className="report-card-expand-hint">
-                    <FaSearchPlus /> View full report
+                    {isExpanded && (
+                      <div className="user-reports-list">
+                        {userGroup.reports.map((r) => (
+                          <div
+                            key={r.id}
+                            className="report-card"
+                            onClick={() => setExpandedReport(r)}
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => e.key === 'Enter' && setExpandedReport(r)}
+                            title="Click to view full report"
+                          >
+                            <div className="report-card-header">
+                              <span className="report-card-date">{r.date}</span>
+                              <button
+                                className="report-card-delete"
+                                onClick={(e) => { e.stopPropagation(); handleDelete(r.id); }}
+                                disabled={deleting === r.id}
+                                title="Delete"
+                              >
+                                <FaTrash />
+                              </button>
+                            </div>
+                            {(r.createdAt || r.updatedAt) && (
+                              <div className="report-card-meta">
+                                {r.createdAt && <span>Created: {formatDateTime(r.createdAt)}</span>}
+                                {r.updatedAt && r.createdAt && new Date(r.updatedAt).getTime() !== new Date(r.createdAt).getTime() && (
+                                  <span>Updated: {formatDateTime(r.updatedAt)}</span>
+                                )}
+                              </div>
+                            )}
+                            <p className="report-card-text">{r.text}</p>
+                            <div className="report-card-expand-hint">
+                              <FaSearchPlus /> View full report
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 

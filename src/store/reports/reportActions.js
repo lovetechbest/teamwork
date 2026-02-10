@@ -1,4 +1,5 @@
 import api from "../../api";
+import { getAccessToken } from "../../utils/tokenManager";
 import { fetchUsers } from "../users/userActions";
 
 /**
@@ -8,14 +9,38 @@ export const getServerDay = async () => {
   try {
     const res = await api.get("/env/get-server-day");
     const data = res?.data;
-    const day = data?.today || data?.day || data?.date;
+    let day = data?.today || data?.day || data?.date;
     if (day && typeof day === "string") {
-      const normalized = day.includes("T") ? day.split("T")[0] : day;
-      return normalized;
+      // Remove time part if present
+      if (day.includes("T")) {
+        day = day.split("T")[0];
+      }
+      // Ensure YYYY-MM-DD format with leading zeros
+      if (day.includes('-')) {
+        const parts = day.split('-');
+        if (parts.length === 3) {
+          const [y, m, d] = parts;
+          day = `${String(y).padStart(4, '0')}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        }
+      }
+      // Validate format
+      if (/^\d{4}-\d{2}-\d{2}$/.test(day)) {
+        return day;
+      }
     }
-    return new Date().toISOString().split("T")[0];
+    // Fallback: use current date in YYYY-MM-DD format
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth() + 1).padStart(2, '0');
+    const d = String(today.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   } catch (err) {
-    return new Date().toISOString().split("T")[0];
+    // Fallback: use current date in YYYY-MM-DD format
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth() + 1).padStart(2, '0');
+    const d = String(today.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   }
 };
 
@@ -70,7 +95,7 @@ export const submitDailyReport = (payload) => async (dispatch) => {
   dispatch({ type: REPORT_SUBMIT_START });
 
   try {
-    const accessToken = sessionStorage.getItem("accessToken");
+    const accessToken = getAccessToken();
     
     if (!accessToken) {
       const errorMsg = "No authentication token found. Please login first.";
@@ -90,7 +115,61 @@ export const submitDailyReport = (payload) => async (dispatch) => {
       return null;
     }
 
-    const res = await api.post("/dayreports/create", payload);
+    // Ensure date is in YYYY-MM-DD format (backend expects this format for create)
+    let formattedDate = payload.date;
+    if (!formattedDate) {
+      const errorMsg = "Date is missing. Cannot submit report.";
+      dispatch({
+        type: REPORT_SUBMIT_FAIL,
+        payload: errorMsg,
+      });
+      alert(errorMsg);
+      return null;
+    }
+
+    // Convert to string and clean up
+    formattedDate = String(formattedDate).trim();
+    
+    // Remove time part if present
+    if (formattedDate.includes('T')) {
+      formattedDate = formattedDate.split('T')[0];
+    }
+    
+    // Handle different date formats
+    if (formattedDate.includes('/')) {
+      // Convert MM/DD/YYYY or DD/MM/YYYY to YYYY-MM-DD
+      const parts = formattedDate.split('/');
+      if (parts.length === 3) {
+        // Assume MM/DD/YYYY format
+        const [m, d, y] = parts;
+        formattedDate = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      }
+    } else if (formattedDate.includes('-')) {
+      // Ensure YYYY-MM-DD format with leading zeros
+      const parts = formattedDate.split('-');
+      if (parts.length === 3) {
+        const [y, m, d] = parts;
+        formattedDate = `${String(y).padStart(4, '0')}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      }
+    }
+
+    // Validate final format
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(formattedDate)) {
+      const errorMsg = `Invalid date format: ${payload.date}. Expected YYYY-MM-DD format.`;
+      dispatch({
+        type: REPORT_SUBMIT_FAIL,
+        payload: errorMsg,
+      });
+      alert(errorMsg);
+      return null;
+    }
+
+    const formattedPayload = {
+      ...payload,
+      date: formattedDate
+    };
+
+    const res = await api.post("/dayreports/create", formattedPayload);
 
     dispatch({
       type: REPORT_SUBMIT_SUCCESS,
@@ -141,7 +220,7 @@ export const updateDailyReport = (reportId, payload) => async (dispatch) => {
   dispatch({ type: REPORT_SUBMIT_START });
 
   try {
-    const accessToken = sessionStorage.getItem("accessToken");
+    const accessToken = getAccessToken();
     
     if (!accessToken) {
       const errorMsg = "No authentication token found. Please login first.";
@@ -202,7 +281,7 @@ export const updateDailyReport = (reportId, payload) => async (dispatch) => {
 
 export const deleteDailyReports = (reportIds) => async (dispatch) => {
   try {
-    const accessToken = sessionStorage.getItem("accessToken");
+    const accessToken = getAccessToken();
     if (!accessToken) return { ok: false, message: "Not authenticated" };
 
     const idsParam = Array.isArray(reportIds) ? reportIds.join(",") : reportIds;
@@ -351,7 +430,7 @@ export const fetchAllDailyReports = (params = {}) => async (dispatch) => {
   dispatch({ type: FETCH_ALL_REPORTS_START });
 
   try {
-    const accessToken = sessionStorage.getItem("accessToken");
+    const accessToken = getAccessToken();
     
     if (!accessToken) {
       const errorMsg = "No authentication token found. Please login first.";

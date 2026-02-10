@@ -14,9 +14,15 @@ export default function LoginPage() {
   const [username, setUsername] = useState('');   // changed from username
   const [password, setPassword] = useState('');
   const [localError, setLocalError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Prevent double-submission
+    if (isSubmitting || loading) {
+      return;
+    }
 
     if (!username || !password) {
       setLocalError('Please fill all fields');
@@ -24,10 +30,14 @@ export default function LoginPage() {
     }
 
     setLocalError('');
+    setIsSubmitting(true);
+    
     try {
       await dispatch(login(username, password));
     } catch (error) {
       // Error handled by auth action
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -61,8 +71,8 @@ export default function LoginPage() {
           placeholder="Password"
         />
 
-        <button type="submit" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
+        <button type="submit" disabled={loading || isSubmitting}>
+          {loading || isSubmitting ? 'Logging in...' : 'Login'}
         </button>
       </form>
 

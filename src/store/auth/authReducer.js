@@ -1,16 +1,17 @@
 const getInitialState = () => {
+  // Don't check localStorage for accessToken - will refresh on app load
+  // Only restore userId/role from localStorage for display purposes
   try {
-    const accessToken = sessionStorage.getItem("accessToken");
-    const userId = sessionStorage.getItem("userId");
-    const userRole = sessionStorage.getItem("userRole");
+    const userId = localStorage.getItem("userId");
+    const userRole = localStorage.getItem("userRole");
     return {
-      isLoggedIn: !!accessToken,
+      isLoggedIn: false, // Will be set to true after refresh check
       user: userId ? { id: userId, role: userRole } : null,
       userId: userId,
       role: userRole,
-      token: accessToken,
+      token: null, // Will be set after refresh
       error: null,
-      loading: false
+      loading: true // Start loading to check refresh token
     };
   } catch (error) {
     return {
@@ -20,7 +21,7 @@ const getInitialState = () => {
       role: null,
       token: null,
       error: null,
-      loading: false
+      loading: true
     };
   }
 };
@@ -42,6 +43,7 @@ export default function authReducer(state = initialState, action) {
       const userId = action.payload.userId || 
                      action.payload.user?.id || 
                      action.payload.id ||
+                     action.payload.user?._id ||
                      action.payload.user?.userID ||
                      action.payload.userID;
       
@@ -50,11 +52,11 @@ export default function authReducer(state = initialState, action) {
                        action.payload.userRole;
       
       if (userId) {
-        sessionStorage.setItem("userId", userId);
+        localStorage.setItem("userId", userId);
       }
       
       if (userRole) {
-        sessionStorage.setItem("userRole", userRole);
+        localStorage.setItem("userRole", userRole);
       }
       
       return {
@@ -68,16 +70,24 @@ export default function authReducer(state = initialState, action) {
       };
 
     case 'RESTORE_SESSION':
+      const restoredUserId = action.payload.userId || localStorage.getItem("userId");
+      const restoredRole = action.payload.role || localStorage.getItem("userRole");
+      if (restoredUserId) localStorage.setItem("userId", restoredUserId);
+      if (restoredRole) localStorage.setItem("userRole", restoredRole);
       return {
         ...state,
+        loading: false,
         isLoggedIn: true,
-        token: action.payload.token
+        token: action.payload.token,
+        userId: restoredUserId,
+        role: restoredRole,
+        user: restoredUserId ? { id: restoredUserId, role: restoredRole } : null
       };
 
     case 'SIGNUP_SUCCESS':
       const signupRole = action.payload.role;
       if (signupRole) {
-        sessionStorage.setItem("userRole", signupRole);
+        localStorage.setItem("userRole", signupRole);
       }
       return {
         ...state,
@@ -95,9 +105,9 @@ export default function authReducer(state = initialState, action) {
       };
 
     case 'LOGOUT':
-      sessionStorage.removeItem("accessToken");
-      sessionStorage.removeItem("userId");
-      sessionStorage.removeItem("userRole");
+      // Don't remove accessToken from localStorage (it's not stored there)
+      localStorage.removeItem("userId");
+      localStorage.removeItem("userRole");
       Object.keys(localStorage)
         .filter(k => k.startsWith('dailyReports'))
         .forEach(k => localStorage.removeItem(k));

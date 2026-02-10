@@ -36,21 +36,7 @@ const DailyReportPage = () => {
     let finalUserId = currentUserId;
     
     if (!finalUserId) {
-      const token = sessionStorage.getItem("accessToken");
-      if (token) {
-        try {
-          const tokenParts = token.split('.');
-          if (tokenParts.length === 3) {
-            const payload = JSON.parse(atob(tokenParts[1]));
-            finalUserId = payload.id || payload.userId || payload.userID || payload.sub;
-            if (finalUserId) {
-              sessionStorage.setItem("userId", finalUserId);
-            }
-          }
-        } catch (e) {
-          // Could not decode token
-        }
-      }
+      finalUserId = localStorage.getItem("userId");
     }
 
     if (!finalUserId) {
@@ -58,8 +44,23 @@ const DailyReportPage = () => {
       return;
     }
 
+    // Ensure date is in YYYY-MM-DD format
+    let formattedDate = today;
+    if (formattedDate) {
+      // Remove time part if present
+      if (formattedDate.includes('T')) {
+        formattedDate = formattedDate.split('T')[0];
+      }
+      // Ensure YYYY-MM-DD format with leading zeros
+      const parts = formattedDate.split('-');
+      if (parts.length === 3) {
+        const [y, m, d] = parts;
+        formattedDate = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      }
+    }
+
     const payload = {
-      date: today,
+      date: formattedDate,
       id: finalUserId,
       main_content: reportText,
     };
@@ -126,23 +127,28 @@ const DailyReportPage = () => {
         Daily Report
       </h2>
 
-      <ReportForm
-        today={today}
-        reportText={reportText}
-        isEditingToday={isEditingToday}
-        errorMessage={errorMessage}
-        loading={loadingToday}
-        onTextChange={handleTextChange}
-        onSubmit={handleReport}
-        isModifying={!!existingReport && isEditingToday}
-      />
-
-      <ReportList
-        reports={reports}
-        today={today}
-        onModify={enableModify}
-        showTimestamps
-      />
+      <div className="daily-report-layout">
+        <aside className="daily-report-form-col">
+          <ReportForm
+            today={today}
+            reportText={reportText}
+            isEditingToday={isEditingToday}
+            errorMessage={errorMessage}
+            loading={loadingToday}
+            onTextChange={handleTextChange}
+            onSubmit={handleReport}
+            isModifying={!!existingReport && isEditingToday}
+          />
+        </aside>
+        <main className="daily-report-list-col">
+          <ReportList
+            reports={reports}
+            today={today}
+            onModify={enableModify}
+            showTimestamps
+          />
+        </main>
+      </div>
     </div>
   );
 };

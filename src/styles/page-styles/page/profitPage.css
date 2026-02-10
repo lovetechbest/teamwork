@@ -2,31 +2,41 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 30px 20px;
-  max-width: 1200px;
+  padding: 16px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
 .profit-page h1 {
-  color: var(--accent);
-  font-size: 2.5rem;
+  color: var(--text);
+  font-size: 1.8rem;
   font-weight: 700;
-  margin-bottom: 40px;
-  text-shadow: 0 0 20px var(--accent-glow);
-  letter-spacing: 0.5px;
+  margin-bottom: 20px;
+}
+
+.profit-layout {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  align-items: flex-start;
+}
+
+.profit-chart-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.profit-calendar-col {
+  flex: 0 0 500px;
+  min-width: 0;
 }
 
 .chart-container {
   width: 100%;
-  max-width: 900px;
-  margin-bottom: 50px;
-  background: linear-gradient(145deg, var(--panel), var(--panel-2));
-  padding: 30px;
+  background: var(--panel);
+  padding: 20px;
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.08),
-    0 20px 40px rgba(0,0,0,0.4);
 }
 
 .calendar-container {
@@ -34,50 +44,28 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 500px;
-  background: linear-gradient(145deg, var(--panel), var(--panel-2));
-  padding: 30px;
+  background: var(--panel);
+  padding: 20px;
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.08),
-    0 20px 40px rgba(0,0,0,0.4),
-    0 0 0 1px rgba(108,124,255,0.1);
-  backdrop-filter: blur(10px);
-  position: relative;
-  overflow: hidden;
-}
-
-.calendar-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  opacity: 0.6;
 }
 
 .calendar-container h3 {
-  color: var(--accent);
-  font-size: 1.5rem;
+  color: var(--text);
+  font-size: 1.2rem;
   font-weight: 700;
-  margin-bottom: 20px;
-  text-shadow: 0 0 15px var(--accent-glow);
-  letter-spacing: 0.3px;
+  margin-bottom: 12px;
 }
 
 .selected-date {
-  margin-top: 20px;
-  padding: 12px 20px;
-  background: linear-gradient(145deg, var(--panel-2), var(--panel));
-  border-radius: 10px;
+  margin-top: 12px;
+  padding: 10px 16px;
+  background: var(--panel-2);
+  border-radius: var(--radius);
   border: 1px solid var(--border);
   color: var(--text);
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
   width: 100%;
   text-align: center;
 }
@@ -90,7 +78,7 @@
 .react-calendar {
   width: 100% !important;
   border: none !important;
-  border-radius: 12px !important;
+  border-radius: var(--radius) !important;
   background: transparent !important;
   font-family: inherit !important;
 }
@@ -99,115 +87,93 @@
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  margin-bottom: 20px !important;
-  padding: 10px 0 !important;
+  margin-bottom: 12px !important;
+  padding: 8px 0 !important;
   border-bottom: 1px solid var(--border) !important;
   background: transparent !important;
 }
 
 .react-calendar__navigation button {
-  background: linear-gradient(135deg, var(--panel-2), var(--panel)) !important;
+  background: var(--panel-2) !important;
   color: var(--text) !important;
   border: 1px solid var(--border) !important;
-  border-radius: 8px !important;
-  padding: 8px 12px !important;
-  font-size: 14px !important;
+  border-radius: var(--radius) !important;
+  padding: 6px 10px !important;
+  font-size: 13px !important;
   font-weight: 600 !important;
-  transition: all 0.3s ease !important;
-  min-width: 40px !important;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2) !important;
+  transition: background-color 0.2s !important;
+  min-width: 36px !important;
 }
 
 .react-calendar__navigation button:hover {
-  background: linear-gradient(135deg, var(--accent), #5a66d1) !important;
+  background: var(--accent) !important;
   color: white !important;
   border-color: var(--accent) !important;
-  box-shadow: 
-    0 0 0 3px var(--accent-glow),
-    0 4px 12px rgba(108,124,255,0.3) !important;
-  transform: translateY(-2px) !important;
 }
 
 .react-calendar__navigation button:enabled:focus {
-  background: linear-gradient(135deg, var(--accent), #5a66d1) !important;
+  background: var(--accent) !important;
   color: white !important;
   border-color: var(--accent) !important;
 }
 
 .react-calendar__navigation__label {
-  font-size: 16px !important;
+  font-size: 15px !important;
   font-weight: 700 !important;
-  color: var(--accent) !important;
-  text-shadow: 0 0 10px var(--accent-glow) !important;
+  color: var(--text) !important;
   pointer-events: none !important;
 }
 
 .react-calendar__month-view__weekdays {
-  margin-bottom: 10px !important;
+  margin-bottom: 8px !important;
 }
 
 .react-calendar__month-view__weekdays__weekday {
-  padding: 10px 0 !important;
+  padding: 8px 0 !important;
   font-weight: 600 !important;
-  font-size: 13px !important;
+  font-size: 12px !important;
   color: var(--muted) !important;
   text-transform: uppercase !important;
-  letter-spacing: 1px !important;
 }
 
 .react-calendar__tile {
-  background: linear-gradient(145deg, var(--panel-2), var(--panel)) !important;
+  background: var(--panel-2) !important;
   border: 1px solid var(--border) !important;
-  border-radius: 8px !important;
+  border-radius: var(--radius) !important;
   color: var(--text) !important;
-  padding: 12px 8px !important;
-  font-size: 14px !important;
+  padding: 8px 6px !important;
+  font-size: 13px !important;
   font-weight: 500 !important;
-  transition: all 0.3s ease !important;
-  margin: 2px !important;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1) !important;
+  transition: background-color 0.2s !important;
+  margin: 1px !important;
 }
 
 .react-calendar__tile:hover {
-  background: linear-gradient(135deg, rgba(108,124,255,0.3), rgba(108,124,255,0.2)) !important;
+  background: rgba(74, 144, 226, 0.1) !important;
   color: var(--accent) !important;
   border-color: var(--accent) !important;
-  box-shadow: 
-    0 0 0 2px var(--accent-glow),
-    0 4px 12px rgba(108,124,255,0.2) !important;
-  transform: translateY(-2px) scale(1.05) !important;
-  z-index: 1 !important;
 }
 
 .react-calendar__tile--active {
-  background: linear-gradient(135deg, var(--accent), #5a66d1) !important;
+  background: var(--accent) !important;
   color: white !important;
   border-color: var(--accent) !important;
-  box-shadow: 
-    0 0 0 3px var(--accent-glow),
-    0 4px 15px rgba(108,124,255,0.4),
-    inset 0 1px 0 rgba(255,255,255,0.2) !important;
   font-weight: 700 !important;
-  transform: scale(1.05) !important;
 }
 
 .react-calendar__tile--active:hover {
-  background: linear-gradient(135deg, #5a66d1, var(--accent)) !important;
-  transform: scale(1.08) translateY(-2px) !important;
+  background: #357abd !important;
 }
 
 .react-calendar__tile--now {
-  background: linear-gradient(145deg, rgba(108,124,255,0.15), rgba(108,124,255,0.1)) !important;
+  background: rgba(74, 144, 226, 0.1) !important;
   border-color: var(--accent) !important;
   color: var(--accent) !important;
   font-weight: 700 !important;
-  box-shadow: 
-    0 0 0 2px rgba(108,124,255,0.3),
-    inset 0 1px 2px rgba(0,0,0,0.1) !important;
 }
 
 .react-calendar__tile--now:hover {
-  background: linear-gradient(135deg, rgba(108,124,255,0.3), rgba(108,124,255,0.2)) !important;
+  background: rgba(74, 144, 226, 0.15) !important;
 }
 
 .react-calendar__month-view__days__day--weekend {
@@ -236,7 +202,20 @@
 
 .react-calendar__tile--disabled:hover {
   background: transparent !important;
-  transform: none !important;
-  box-shadow: none !important;
 }
 
+@media (max-width: 1000px) {
+  .profit-layout {
+    flex-direction: column;
+  }
+  
+  .profit-chart-col {
+    flex: none;
+    width: 100%;
+  }
+  
+  .profit-calendar-col {
+    flex: none;
+    width: 100%;
+  }
+}

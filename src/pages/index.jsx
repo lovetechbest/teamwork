@@ -19,11 +19,11 @@ import ErrorBoundary from '../components/ErrorBoundary';
 
 const Pages = () => {
   const { role } = useSelector(state => state.auth);
-  const userRole = role || sessionStorage.getItem("userRole");
+  const userRole = role || localStorage.getItem("userRole");
   const isManager = isHighman(userRole);
 
   return (
-    <div>
+    <div className="app-layout">
       <Header />
       <div className="main">
         <Routes>

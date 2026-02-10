@@ -2,7 +2,7 @@ import React from 'react';
 import ProjectCard from './ProjectCard';
 import './ProjectList.css';
 
-const ProjectList = ({ projects }) => {
+const ProjectList = ({ projects, onEdit, onDelete, editingId }) => {
   if (projects.length === 0) {
     return (
       <div className="projects-list">
@@ -13,9 +13,18 @@ const ProjectList = ({ projects }) => {
 
   return (
     <div className="projects-list">
-      {projects.map((project, index) => (
-        <ProjectCard key={index} project={project} />
-      ))}
+      {projects.map((project) => {
+        const projectId = project._id || project.id;
+        return (
+          <ProjectCard 
+            key={projectId || project.name} 
+            project={project}
+            onEdit={onEdit ? () => onEdit(projectId) : null}
+            onDelete={onDelete ? () => onDelete(projectId) : null}
+            isEditing={editingId === projectId}
+          />
+        );
+      })}
     </div>
   );
 };

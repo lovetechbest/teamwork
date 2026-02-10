@@ -25,3 +25,51 @@
   color: var(--text);
   margin: 8px 0;
 }
+
+.project-card.editing {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.card-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid var(--border);
+}
+
+.modify-button,
+.delete-button {
+  flex: 1;
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.modify-button {
+  background: var(--accent);
+  color: white;
+}
+
+.modify-button:hover:not(:disabled) {
+  background: #357abd;
+}
+
+.modify-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.delete-button {
+  background: #ff4757;
+  color: white;
+}
+
+.delete-button:hover {
+  background: #ee3742;
+}

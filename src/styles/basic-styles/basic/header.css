@@ -5,9 +5,8 @@
   flex-wrap: wrap;
   gap: 12px;
   padding: 12px 20px;
-  background: linear-gradient(180deg, #0c1235, #080c22);
+  background: var(--panel);
   border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(14px);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -32,32 +31,14 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  background: linear-gradient(145deg, rgba(74, 222, 128, 0.2), rgba(34, 197, 94, 0.1));
-  border-radius: 10px;
-  border: 1px solid rgba(74, 222, 128, 0.4);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.15),
-    0 4px 16px rgba(34, 197, 94, 0.25);
-  transition: all 0.35s ease;
+  background: var(--panel-2);
+  border-radius: 8px;
+  border: 1px solid var(--border);
 }
 
 .logo-icon {
   font-size: 24px;
-  color: #4ade80;
-  filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.5));
-  transition: all 0.35s ease;
-}
-
-.top-header .logo:hover .logo-icon-wrap {
-  transform: scale(1.05) translateY(-1px);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    0 6px 24px rgba(34, 197, 94, 0.35);
-  border-color: rgba(74, 222, 128, 0.6);
-}
-
-.top-header .logo:hover .logo-icon {
-  filter: drop-shadow(0 0 12px rgba(74, 222, 128, 0.7));
+  color: var(--accent);
 }
 
 .logo-text {
@@ -65,17 +46,7 @@
   font-size: 26px;
   font-weight: 400;
   letter-spacing: 0.12em;
-  display: inline-block;
-  background: linear-gradient(135deg, #4ade80 0%, #22c55e 40%, #16a34a 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  transition: all 0.4s ease;
-  text-shadow: 0 0 60px rgba(74, 222, 128, 0.25);
-}
-
-.top-header .logo:hover .logo-text {
-  filter: brightness(1.15);
+  color: var(--accent);
 }
 
 .top-nav {
@@ -105,19 +76,14 @@
 
 .top-nav a.active,
 .top-nav a:hover {
-  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  background: var(--panel-2);
   color: var(--text);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.08),
-    0 10px 25px rgba(0,0,0,0.4);
-  transform: translateY(-1px);
 }
 
 .top-nav a.active .nav-icon,
 .top-nav a:hover .nav-icon {
   opacity: 1;
   color: var(--accent);
-  transform: scale(1.1);
 }
 
 .logout-button {
@@ -145,18 +111,13 @@
 }
 
 .logout-button:hover {
-  background: linear-gradient(180deg, rgba(255, 77, 87, 0.1), rgba(255, 77, 87, 0.05));
+  background: rgba(255, 77, 87, 0.1);
   color: #ff4757;
-  border-color: rgba(255, 77, 87, 0.5);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.08),
-    0 10px 25px rgba(0,0,0,0.4);
-  transform: translateY(-1px);
+  border-color: #ff4757;
 }
 
 .logout-button:hover .nav-icon {
   opacity: 1;
-  transform: scale(1.1) rotate(-10deg);
 }
 
 /* Change UserInfo button in topbar */
@@ -175,26 +136,20 @@
 }
 
 .top-nav .change-userinfo-button:hover {
-  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  background: var(--panel-2);
   color: var(--text);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.08),
-    0 10px 25px rgba(0,0,0,0.4);
-  transform: translateY(-1px);
 }
 
 .top-nav .change-userinfo-button:hover .nav-icon {
   opacity: 1;
   color: var(--accent);
-  transform: scale(1.1);
 }
 
 /* Change UserInfo modal - rendered via portal to document.body */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -204,26 +159,25 @@
 }
 
 .modal-content.change-userinfo-modal {
-  background: linear-gradient(180deg, #1e2744, #151a30);
-  border-radius: 16px;
+  background: var(--panel);
+  border-radius: var(--radius);
   padding: 32px 36px;
   min-width: 360px;
   max-width: 420px;
   width: 100%;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6),
-              0 0 0 1px rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
 }
 
 .modal-content.change-userinfo-modal h3 {
   margin: 0 0 8px 0;
-  color: #e5f0ff;
+  color: var(--text);
   font-size: 20px;
 }
 
 .modal-content.change-userinfo-modal .form-hint {
   margin: 0 0 16px 0;
   font-size: 12px;
-  color: #64748b;
+  color: var(--muted);
 }
 
 .modal-content.change-userinfo-modal .form-group {
@@ -236,7 +190,7 @@
 .modal-content.change-userinfo-modal .form-group label {
   flex-shrink: 0;
   width: 130px;
-  color: #94a3b8;
+  color: var(--text);
   font-size: 14px;
 }
 
@@ -245,33 +199,32 @@
   min-width: 0;
   width: 100%;
   padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid #334155;
-  background: #0f172a;
-  color: #e5f0ff;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
   font-size: 14px;
   box-sizing: border-box;
 }
 
 .modal-content.change-userinfo-modal .form-group input::placeholder {
-  color: #64748b;
+  color: var(--muted);
 }
 
 .modal-content.change-userinfo-modal .form-group input:focus,
 .modal-content.change-userinfo-modal .form-group select:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+  border-color: var(--accent);
 }
 
 .modal-content.change-userinfo-modal .form-group select {
   flex: 1;
   min-width: 0;
   padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid #334155;
-  background: #0f172a;
-  color: #e5f0ff;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
   font-size: 14px;
   cursor: pointer;
   box-sizing: border-box;
@@ -294,27 +247,27 @@
 }
 
 .modal-content.change-userinfo-modal .modal-actions button[type="submit"] {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: var(--accent);
   border: none;
   color: #fff;
 }
 
 .modal-content.change-userinfo-modal .modal-actions button[type="button"] {
   background: transparent;
-  border: 1px solid #334155;
-  color: #94a3b8;
+  border: 1px solid var(--border);
+  color: var(--muted);
 }
 
 .modal-content.change-userinfo-modal .modal-actions button:hover {
-  transform: translateY(-1px);
+  opacity: 0.9;
 }
 
 .modal-content.change-userinfo-modal .error-text {
   margin-bottom: 16px;
-  background: rgba(220, 38, 38, 0.15);
-  border: 1px solid rgba(220, 38, 38, 0.4);
-  color: #fecaca;
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid #ff4757;
+  color: #ff4757;
   padding: 10px 12px;
-  border-radius: 8px;
+  border-radius: var(--radius);
   font-size: 13px;
 }

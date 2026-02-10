@@ -9,8 +9,8 @@ import { isHighman } from '../../../utils/roles';
  */
 export const useClientStats = () => {
   const { userId, role } = useSelector((state) => state.auth);
-  const currentUserId = userId || sessionStorage.getItem('userId');
-  const userRole = role || sessionStorage.getItem('userRole');
+  const currentUserId = userId || localStorage.getItem('userId');
+  const userRole = role || localStorage.getItem('userRole');
   const highman = isHighman(userRole);
 
   const [activeCount, setActiveCount] = useState(0);
