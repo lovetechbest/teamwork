@@ -2,6 +2,13 @@
   position: relative;
   overflow: hidden;
   background: linear-gradient(165deg, var(--panel-2) 0%, var(--panel) 50%, rgba(108, 124, 255, 0.08) 100%) !important;
+  padding: 14px 18px !important;
+  min-height: 120px !important;
+}
+
+.user-management-card h3 {
+  font-size: 14px;
+  gap: 6px;
 }
 
 .user-management-card::before {
@@ -34,22 +41,22 @@
 
 .user-management-card .card-title-icon {
   color: var(--accent);
-  font-size: 1.2em;
+  font-size: 1em;
   filter: drop-shadow(0 0 6px var(--accent-glow));
 }
 
 .user-management-content {
   display: flex;
-  gap: 20px;
+  gap: 12px;
   align-items: center;
-  margin-top: 12px;
+  margin-top: 8px;
   flex-wrap: wrap;
 }
 
 .user-management-visual {
   flex: 0 0 auto;
-  width: 100px;
-  height: 100px;
+  width: 56px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -67,10 +74,10 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  font-size: 3rem;
+  font-size: 1.75rem;
   color: var(--accent);
   opacity: 0.9;
-  filter: drop-shadow(0 0 12px var(--accent-glow));
+  filter: drop-shadow(0 0 10px var(--accent-glow));
   animation: icon-pulse 3s ease-in-out infinite;
 }
 
@@ -78,13 +85,13 @@
   position: absolute;
   right: 0;
   bottom: 0;
-  font-size: 1.5rem;
+  font-size: 1rem;
   color: #4ade80;
   background: linear-gradient(145deg, var(--panel), var(--panel-2));
-  padding: 6px;
+  padding: 4px;
   border-radius: 50%;
   border: 1px solid var(--accent);
-  box-shadow: 0 0 10px rgba(108, 124, 255, 0.3);
+  box-shadow: 0 0 8px rgba(108, 124, 255, 0.3);
 }
 
 @keyframes icon-pulse {
@@ -94,7 +101,27 @@
 
 .user-management-announcements {
   flex: 1;
-  min-width: 140px;
+  min-width: 100px;
+  gap: 8px;
+}
+
+.user-management-announcements.daily-report-announcements {
+  gap: 8px;
+}
+
+.user-management-card .announcement {
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+}
+
+.user-management-card .announcement .count {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.user-management-card .announcement .label {
+  font-size: 12px;
 }
 
 .user-management-error {
@@ -104,28 +131,24 @@
   flex: 1 1 100%;
 }
 
-.user-management-card .announcement {
-  transition: all 0.3s ease;
-}
-
 .user-management-card .announcement:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.08),
-    0 8px 20px rgba(0,0,0,0.35),
-    0 0 15px rgba(108, 124, 255, 0.15);
+    0 6px 14px rgba(0,0,0,0.3),
+    0 0 12px rgba(108, 124, 255, 0.12);
 }
 
 @media (max-width: 768px) {
   .user-management-content {
-    flex-direction: column;
-    gap: 16px;
+    flex-direction: row;
+    gap: 10px;
   }
   .user-management-visual {
-    width: 80px;
-    height: 80px;
+    width: 48px;
+    height: 48px;
   }
   .user-icons-stack .icon-main {
-    font-size: 2.5rem;
+    font-size: 1.5rem;
   }
 }

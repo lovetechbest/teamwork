@@ -10,7 +10,7 @@
 
 .daily-report__sidebar {
   flex-shrink: 0;
-  width: 320px;
+  width: 520px;
 }
 
 .daily-report-box {
@@ -91,7 +91,7 @@
 }
 
 .daily-report-box .report-form .report-textarea {
-  min-height: 320px;
+  min-height: 480px;
   resize: vertical;
 }
 
@@ -131,7 +131,7 @@
   }
   .daily-report__sidebar {
     width: 100%;
-    max-width: 480px;
+    max-width: 520px;
   }
 }
 

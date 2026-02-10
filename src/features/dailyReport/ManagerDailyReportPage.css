@@ -131,7 +131,7 @@
 }
 
 .manager-my-report-form {
-  flex: 0 0 300px;
+  flex: 0 0 500px;
   padding: 12px;
   background: var(--panel-2);
   border-radius: 8px;
@@ -167,7 +167,7 @@
 }
 
 .manager-my-report-form .report-textarea {
-  min-height: 280px;
+  min-height: 420px;
   resize: vertical;
 }
 
