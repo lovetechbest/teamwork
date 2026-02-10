@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { getUserRole } from '../../store/auth/authStorage';
 import { isHighman } from '../../utils/roles';
 import { useProjects } from './hooks/useProjects';
 import ProjectForm from './components/ProjectForm';
@@ -20,7 +21,7 @@ const DEBOUNCE_MS = 400;
 
 const ProjectsPage = () => {
   const { role } = useSelector((state) => state.auth);
-  const userRole = role || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('userRole') : null);
+  const userRole = role || getUserRole();
   const showUserIDFilter = isHighman(userRole);
 
   const [filterInputs, setFilterInputs] = useState(INITIAL_FILTER_INPUTS);

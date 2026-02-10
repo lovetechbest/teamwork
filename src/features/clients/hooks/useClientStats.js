@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { getUserId, getUserRole } from '../../../store/auth/authStorage';
 import { fetchClients } from '../../../store/clients/clientActions';
 import { isHighman } from '../../../utils/roles';
 
@@ -9,8 +10,8 @@ import { isHighman } from '../../../utils/roles';
  */
 export const useClientStats = () => {
   const { userId, role } = useSelector((state) => state.auth);
-  const currentUserId = userId || sessionStorage.getItem('userId');
-  const userRole = role || sessionStorage.getItem('userRole');
+  const currentUserId = userId || getUserId();
+  const userRole = role || getUserRole();
   const highman = isHighman(userRole);
 
   const [activeCount, setActiveCount] = useState(0);

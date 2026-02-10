@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useDispatch } from 'react-redux';
 import { useManagerDailyReports } from './hooks/useManagerDailyReports';
 import { useDailyReport } from './hooks/useDailyReport';
+import { getAccessToken, setUserId } from '../../store/auth/authStorage';
 import { deleteDailyReports, submitDailyReport, updateDailyReport, fetchReportForDate, getServerDay, normalizeDate } from '../../store/reports/reportActions';
 import ReportForm from './components/ReportForm';
 import ReportList from './components/ReportList';
@@ -83,12 +84,12 @@ const ManagerDailyReportPage = () => {
     }
     let finalUserId = currentUserId;
     if (!finalUserId) {
-      const token = sessionStorage.getItem("accessToken");
+      const token = getAccessToken();
       if (token) {
         try {
           const payload = JSON.parse(atob(token.split(".")[1]));
           finalUserId = payload.id || payload.userId || payload.userID || payload.sub;
-          if (finalUserId) sessionStorage.setItem("userId", finalUserId);
+          if (finalUserId) setUserId(finalUserId);
         } catch (e) { /* ignore */ }
       }
     }

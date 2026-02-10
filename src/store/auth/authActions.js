@@ -1,4 +1,5 @@
 import api from "../../api";
+import { setAccessToken, setUserId, setUserRole, getUserId } from "./authStorage";
 
 export const login = (username, password) => async (dispatch) => {
   dispatch({ type: "LOGIN_REQUEST" });
@@ -10,21 +11,21 @@ export const login = (username, password) => async (dispatch) => {
     });
 
     if (res.data && res.data.accessToken) {
-      sessionStorage.setItem("accessToken", res.data.accessToken);
-      
-      let userId = res.data.user?.uniqueID || 
-                   res.data.user?._id || 
-                   res.data.user?.id || 
-                   res.data.userId || 
-                   res.data.id || 
+      setAccessToken(res.data.accessToken);
+
+      let userId = res.data.user?.uniqueID ||
+                   res.data.user?._id ||
+                   res.data.user?.id ||
+                   res.data.userId ||
+                   res.data.id ||
                    res.data.user?.userID ||
                    res.data.userID;
-      
-      let userRole = res.data.user?.role || 
+
+      let userRole = res.data.user?.role ||
                      res.data.role ||
                      res.data.user?.userRole ||
                      res.data.userRole;
-      
+
       if (!userId || !userRole) {
         try {
           const tokenParts = (res.data.accessToken || res.data.token || '').split('.');
@@ -37,14 +38,9 @@ export const login = (username, password) => async (dispatch) => {
           // Could not decode token
         }
       }
-      
-      if (userId) {
-        sessionStorage.setItem("userId", userId);
-      }
-      
-      if (userRole) {
-        sessionStorage.setItem("userRole", userRole);
-      }
+
+      if (userId) setUserId(userId);
+      if (userRole) setUserRole(userRole);
       
       dispatch({
         type: "LOGIN_SUCCESS",
@@ -83,9 +79,7 @@ export const signUp = ({ name, username, password, confirmPassword, role }) => a
       role,
     });
 
-    if (role) {
-      sessionStorage.setItem("userRole", role);
-    }
+    if (role) setUserRole(role);
 
     dispatch({
       type: "SIGNUP_SUCCESS",
@@ -104,7 +98,7 @@ export const changeUserInfo = ({ id, name, userID, password, role }) => async (d
   dispatch({ type: "CHANGE_USERINFO_REQUEST" });
 
   try {
-    const userId = id || sessionStorage.getItem("userId");
+    const userId = id || getUserId();
     if (!userId) throw new Error("User ID not found. Please login again.");
 
     const body = {};
@@ -119,8 +113,8 @@ export const changeUserInfo = ({ id, name, userID, password, role }) => async (d
       const updatedUser = res.data.user;
       const newUserId = updatedUser.uniqueID || updatedUser._id || updatedUser.id || userId;
       const newRole = updatedUser.role || res.data.role;
-      if (newUserId) sessionStorage.setItem("userId", newUserId);
-      if (newRole) sessionStorage.setItem("userRole", newRole);
+      if (newUserId) setUserId(newUserId);
+      if (newRole) setUserRole(newRole);
       dispatch({ type: "LOGIN_SUCCESS", payload: { ...res.data, userId: newUserId, role: newRole } });
     }
 

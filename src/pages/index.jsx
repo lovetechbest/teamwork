@@ -11,6 +11,7 @@ import ProjectsPage from '../features/projects/ProjectsPage';
 import ProfitPage from '../features/profit/ProfitPage';
 import ManagerProfitPage from '../features/profit/ManagerProfitPage';
 import UserManagementPage from '../features/users/UserManagementPage';
+import { getUserRole } from '../store/auth/authStorage';
 import { isHighman } from '../utils/roles';
 
 import Header from '../components/Header';
@@ -19,7 +20,7 @@ import ErrorBoundary from '../components/ErrorBoundary';
 
 const Pages = () => {
   const { role } = useSelector(state => state.auth);
-  const userRole = role || sessionStorage.getItem("userRole");
+  const userRole = role || getUserRole();
   const isManager = isHighman(userRole);
 
   return (

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
+import { getAccessToken, setUserId } from '../../store/auth/authStorage';
 import { submitDailyReport, updateDailyReport, fetchReportForDate } from '../../store/reports/reportActions';
 import { useDailyReport } from './hooks/useDailyReport';
 import ReportForm from './components/ReportForm';
@@ -36,16 +37,14 @@ const DailyReportPage = () => {
     let finalUserId = currentUserId;
     
     if (!finalUserId) {
-      const token = sessionStorage.getItem("accessToken");
+      const token = getAccessToken();
       if (token) {
         try {
           const tokenParts = token.split('.');
           if (tokenParts.length === 3) {
             const payload = JSON.parse(atob(tokenParts[1]));
             finalUserId = payload.id || payload.userId || payload.userID || payload.sub;
-            if (finalUserId) {
-              sessionStorage.setItem("userId", finalUserId);
-            }
+            if (finalUserId) setUserId(finalUserId);
           }
         } catch (e) {
           // Could not decode token

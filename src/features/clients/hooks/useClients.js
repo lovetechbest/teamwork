@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { getUserId, getUserRole } from '../../../store/auth/authStorage';
 import { createClient as apiCreateClient, updateClient as apiUpdateClient, deleteClient as apiDeleteClient, fetchClients } from '../../../store/clients/clientActions';
 import { isHighman } from '../../../utils/roles';
 
 export const useClients = (filters = {}) => {
   const { userId, role } = useSelector((state) => state.auth);
-  const currentUserId = userId || sessionStorage.getItem('userId');
-  const userRole = role || sessionStorage.getItem('userRole');
+  const currentUserId = userId || getUserId();
+  const userRole = role || getUserRole();
   const highman = isHighman(userRole);
 
   const [clients, setClients] = useState([]);

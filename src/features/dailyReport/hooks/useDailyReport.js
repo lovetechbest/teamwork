@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { getUserId } from '../../../store/auth/authStorage';
 import { fetchReportForDate, fetchReportHistory, getServerDay } from '../../../store/reports/reportActions';
 
 const STORAGE_KEY = 'dailyReports';
@@ -11,7 +12,7 @@ export const useDailyReport = (options = {}) => {
   const dispatch = useDispatch();
   const { userId, user } = useSelector(state => state.auth);
   const [today, setToday] = useState(null);
-  const currentUserId = userId || user?.id || user?.userID || sessionStorage.getItem("userId");
+  const currentUserId = userId || user?.id || user?.userID || getUserId();
   const storageKey = getStorageKey(currentUserId);
   
   const [reportText, setReportText] = useState('');

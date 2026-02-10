@@ -1,5 +1,6 @@
 // src/api.js
 import axios from "axios";
+import { getAccessToken, setAccessToken } from "./store/auth/authStorage";
 
 // Use /api prefix which will be proxied by Vite to the backend server
 const api = axios.create({
@@ -10,10 +11,10 @@ const api = axios.create({
     },
 });
 
-// Request interceptor to add Authorization header
+// Request interceptor to add Authorization header (persisted so login survives browser close)
 api.interceptors.request.use(
     (config) => {
-        const accessToken = sessionStorage.getItem("accessToken");
+        const accessToken = getAccessToken();
         if (accessToken) {
             config.headers.Authorization = `Bearer ${accessToken}`;
         }
@@ -33,13 +34,13 @@ api.interceptors.response.use(
         // If the error is due to an expired token (401)
         if (error.response && error.response.status === 401) {
             try {
-                // Call the refresh endpoint through the proxy
+                // Call the refresh endpoint (refresh token in httpOnly cookie withCredentials)
                 const refreshResponse = await api.post("/auth/refresh", null, {
                     withCredentials: true
                 });
 
                 const { accessToken } = refreshResponse.data;
-                sessionStorage.setItem("accessToken", accessToken);
+                setAccessToken(accessToken);
 
                 // Retry the original request with the new access token
                 originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;

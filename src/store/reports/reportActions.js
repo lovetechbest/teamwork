@@ -1,4 +1,5 @@
 import api from "../../api";
+import { getAccessToken } from "../auth/authStorage";
 import { fetchUsers } from "../users/userActions";
 
 /**
@@ -70,7 +71,7 @@ export const submitDailyReport = (payload) => async (dispatch) => {
   dispatch({ type: REPORT_SUBMIT_START });
 
   try {
-    const accessToken = sessionStorage.getItem("accessToken");
+    const accessToken = getAccessToken();
     
     if (!accessToken) {
       const errorMsg = "No authentication token found. Please login first.";
@@ -141,7 +142,7 @@ export const updateDailyReport = (reportId, payload) => async (dispatch) => {
   dispatch({ type: REPORT_SUBMIT_START });
 
   try {
-    const accessToken = sessionStorage.getItem("accessToken");
+    const accessToken = getAccessToken();
     
     if (!accessToken) {
       const errorMsg = "No authentication token found. Please login first.";
@@ -202,7 +203,7 @@ export const updateDailyReport = (reportId, payload) => async (dispatch) => {
 
 export const deleteDailyReports = (reportIds) => async (dispatch) => {
   try {
-    const accessToken = sessionStorage.getItem("accessToken");
+    const accessToken = getAccessToken();
     if (!accessToken) return { ok: false, message: "Not authenticated" };
 
     const idsParam = Array.isArray(reportIds) ? reportIds.join(",") : reportIds;
@@ -292,7 +293,7 @@ export const fetchReportHistory = async (forUserId, daysBack = 90, serverToday =
  * Otherwise falls back to: totalUsers from fetchUsers, reportedCount from unique reporters.
  */
 export const fetchDailyReportStats = async (date) => {
-  const accessToken = sessionStorage.getItem("accessToken");
+  const accessToken = getAccessToken();
   if (!accessToken) return { reportedCount: 0, notReportedCount: 0 };
 
   const apiDate = toApiDate(date);
@@ -351,7 +352,7 @@ export const fetchAllDailyReports = (params = {}) => async (dispatch) => {
   dispatch({ type: FETCH_ALL_REPORTS_START });
 
   try {
-    const accessToken = sessionStorage.getItem("accessToken");
+    const accessToken = getAccessToken();
     
     if (!accessToken) {
       const errorMsg = "No authentication token found. Please login first.";

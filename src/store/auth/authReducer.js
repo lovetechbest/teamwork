@@ -1,8 +1,10 @@
+import { getAccessToken, getUserId, getUserRole, setUserId, setUserRole, clearAuth } from "./authStorage";
+
 const getInitialState = () => {
   try {
-    const accessToken = sessionStorage.getItem("accessToken");
-    const userId = sessionStorage.getItem("userId");
-    const userRole = sessionStorage.getItem("userRole");
+    const accessToken = getAccessToken();
+    const userId = getUserId();
+    const userRole = getUserRole();
     return {
       isLoggedIn: !!accessToken,
       user: userId ? { id: userId, role: userRole } : null,
@@ -49,14 +51,9 @@ export default function authReducer(state = initialState, action) {
                        action.payload.user?.role ||
                        action.payload.userRole;
       
-      if (userId) {
-        sessionStorage.setItem("userId", userId);
-      }
-      
-      if (userRole) {
-        sessionStorage.setItem("userRole", userRole);
-      }
-      
+      if (userId) setUserId(userId);
+      if (userRole) setUserRole(userRole);
+
       return {
         ...state,
         loading: false,
@@ -74,16 +71,15 @@ export default function authReducer(state = initialState, action) {
         token: action.payload.token
       };
 
-    case 'SIGNUP_SUCCESS':
+    case 'SIGNUP_SUCCESS': {
       const signupRole = action.payload.role;
-      if (signupRole) {
-        sessionStorage.setItem("userRole", signupRole);
-      }
+      if (signupRole) setUserRole(signupRole);
       return {
         ...state,
         loading: false,
         role: signupRole
       };
+    }
 
     case 'LOGIN_FAIL':
     case 'SIGNUP_FAIL':
@@ -95,12 +91,12 @@ export default function authReducer(state = initialState, action) {
       };
 
     case 'LOGOUT':
-      sessionStorage.removeItem("accessToken");
-      sessionStorage.removeItem("userId");
-      sessionStorage.removeItem("userRole");
-      Object.keys(localStorage)
-        .filter(k => k.startsWith('dailyReports'))
-        .forEach(k => localStorage.removeItem(k));
+      clearAuth();
+      try {
+        Object.keys(localStorage)
+          .filter(k => k.startsWith('dailyReports'))
+          .forEach(k => localStorage.removeItem(k));
+      } catch (_) {}
       return {
         isLoggedIn: false,
         user: null,

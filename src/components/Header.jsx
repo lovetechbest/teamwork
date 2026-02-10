@@ -14,13 +14,14 @@ import {
   FaUserEdit,
   FaUserCog
 } from 'react-icons/fa';
+import { getUserId, getUserRole } from '../store/auth/authStorage';
 import { isHighman } from '../utils/roles';
 
 export default function Header({ onPageChange }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { userId, role } = useSelector((state) => state.auth);
-  const userRole = role || sessionStorage.getItem("userRole");
+  const userRole = role || getUserRole();
   const isHighmanUser = isHighman(userRole);
   const [showChangeUserInfo, setShowChangeUserInfo] = useState(false);
   const [name, setName] = useState('');
@@ -62,7 +63,7 @@ export default function Header({ onPageChange }) {
     setError('');
     try {
       await dispatch(changeUserInfo({
-        id: userId || sessionStorage.getItem('userId'),
+        id: userId || getUserId(),
         name: name || undefined,
         userID: userID || undefined,
         password: password || undefined,

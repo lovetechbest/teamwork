@@ -1,4 +1,5 @@
 import api from "../../api";
+import { getAccessToken } from "../auth/authStorage";
 
 export const FETCH_ALL_PROFITS_START = "FETCH_ALL_PROFITS_START";
 export const FETCH_ALL_PROFITS_SUCCESS = "FETCH_ALL_PROFITS_SUCCESS";
@@ -8,7 +9,7 @@ export const fetchAllProfits = (params = {}) => async (dispatch) => {
   dispatch({ type: FETCH_ALL_PROFITS_START });
 
   try {
-    const accessToken = sessionStorage.getItem("accessToken");
+    const accessToken = getAccessToken();
     
     if (!accessToken) {
       const errorMsg = "No authentication token found. Please login first.";

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { getUserId } from '../../../store/auth/authStorage';
 import { fetchReportForDate, getServerDay } from '../../../store/reports/reportActions';
 import '../../../styles/dash-board/dash/developer-daily-report.css';
 
@@ -20,7 +21,7 @@ export default function DeveloperDailyReport() {
   const [yesterdayStr, setYesterdayStr] = useState('');
   const dispatch = useDispatch();
   const { userId, user } = useSelector(state => state.auth);
-  const currentUserId = userId || user?.id || user?.userID || sessionStorage.getItem("userId");
+  const currentUserId = userId || user?.id || user?.userID || getUserId();
   const storageKey = getStorageKey(currentUserId);
 
   useEffect(() => {
