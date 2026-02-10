@@ -2,17 +2,35 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import './ProjectForm.css';
 
-const ProjectForm = ({ onSubmit }) => {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm();
+const toFormDefaultValues = (project) => {
+  if (!project) return undefined;
+  return {
+    projectName: project.projectName ?? '',
+    companyOrPerson: project.companyOrPerson ?? '',
+    summary: project.summary ?? '',
+    stack: Array.isArray(project.stack) ? project.stack.join(', ') : (project.stack ?? ''),
+    githubUrl: project.githubUrl ?? '',
+    communicationApp: project.communicationApp ?? '',
+  };
+};
 
-  const handleFormSubmit = (data) => {
-    onSubmit(data);
-    reset();
+const ProjectForm = ({ onSubmit, disabled = false, defaultValues, title = 'Add Project', onCancel }) => {
+  const { register, handleSubmit, formState: { errors }, reset } = useForm({
+    defaultValues: toFormDefaultValues(defaultValues),
+  });
+
+  const handleFormSubmit = async (data) => {
+    try {
+      await onSubmit(data);
+      reset();
+    } catch {
+      // Error shown by parent (e.g. useProjects error state)
+    }
   };
 
   return (
     <div className="project-form-container">
-      <h2>Add Project</h2>
+      <h2>{title}</h2>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="form-field">
           <label htmlFor="project-name">Project Name</label>
@@ -86,7 +104,12 @@ const ProjectForm = ({ onSubmit }) => {
           {errors.communicationApp && <span className="error">{errors.communicationApp.message}</span>}
         </div>
 
-        <button type="submit">Submit</button>
+        <div className="form-actions">
+          {onCancel && (
+            <button type="button" onClick={onCancel} className="form-cancel">Cancel</button>
+          )}
+          <button type="submit" disabled={disabled}>Submit</button>
+        </div>
       </form>
     </div>
   );

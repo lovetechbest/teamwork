@@ -51,6 +51,35 @@
   display: block;
 }
 
+.form-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.form-actions button[type="submit"] {
+  padding: 14px 28px;
+  background: linear-gradient(135deg, var(--accent), #5a66d1);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.form-cancel {
+  padding: 14px 28px;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .form-field button {
   width: 100%;
   padding: 14px 28px;

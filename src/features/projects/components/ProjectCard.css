@@ -16,6 +16,50 @@
     0 8px 25px rgba(0,0,0,0.3);
 }
 
+.project-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.project-card__header h3 {
+  flex: 1;
+  margin: 0;
+}
+
+.project-card__actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.project-card__btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.project-card__btn:hover {
+  opacity: 0.9;
+}
+
+.project-card__btn--modify {
+  background: linear-gradient(135deg, var(--accent), #5a66d1);
+  color: white;
+}
+
+.project-card__btn--delete {
+  background: rgba(220, 53, 69, 0.15);
+  color: #dc3545;
+  border: 1px solid rgba(220, 53, 69, 0.4);
+}
+
 .project-card h3 {
   color: var(--accent);
   margin-bottom: 12px;

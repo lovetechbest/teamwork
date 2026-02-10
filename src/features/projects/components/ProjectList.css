@@ -10,3 +10,18 @@
   padding: 40px 20px;
   grid-column: 1 / -1;
 }
+
+.project-edit-modal-overlay {
+  z-index: 1000;
+}
+
+.project-edit-modal {
+  max-width: 600px;
+  padding: 0;
+  overflow: auto;
+}
+
+.project-edit-modal .project-form-container {
+  margin: 0;
+  box-shadow: none;
+}

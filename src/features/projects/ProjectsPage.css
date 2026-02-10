@@ -3,3 +3,8 @@
   max-width: 1200px;
   margin: 0 auto;
 }
+
+.projects-page .error-message {
+  color: #c00;
+  margin: 0 0 1rem;
+}
