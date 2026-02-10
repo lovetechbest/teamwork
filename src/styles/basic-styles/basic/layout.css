@@ -1,52 +1,65 @@
-#app {
-    padding-bottom: 60px;  /* Space for footer (60px = footer height + 20px gap) */
-    position: relative;
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .main {
-  padding: 20px 24px;
-  max-width: 1400px;
+  flex: 1 0 auto;
+  padding: 6px 8px;
+  max-width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
+  width: 100%;
 }
 
 .grid {
   display: grid;
   grid-template-columns: 1.3fr 1fr;
   gap: 20px;
+  height: 100%;
+  min-height: calc(100vh - 200px);
+  align-items: stretch;
 }
 
 .column {
   display: grid;
   gap: 26px;
+  grid-auto-rows: 1fr;
+  height: 100%;
+  align-items: stretch;
+}
+
+.grid .link-element {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  align-items: stretch;
 }
 
 /* General card styling */
 .card {
-  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  background: var(--panel);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 22px;
-  min-height: 170px;
+  padding: 16px;
   position: relative;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.06),
-    0 18px 40px rgba(0,0,0,0.55);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.08),
-    0 20px 45px rgba(0,0,0,0.6),
-    0 0 15px var(--accent-glow);
+  box-sizing: border-box;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
 }
 
 .card h3 {
   font-size: 16px;
   font-weight: 600;
-  color: #f1f3ff;
+  color: var(--text);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -54,10 +67,14 @@
 }
 
 .footer-cards {
-  margin-bottom: 26px;
+  flex-shrink: 0;
+  margin-top: auto;
+  padding: 20px 16px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 26px;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
 }
 
 .card.small {
@@ -89,7 +106,7 @@
 
 @media (max-width: 768px) {
   .main {
-    padding: 16px;
+    padding: 6px 8px;
   }
 
   .grid {
@@ -128,7 +145,7 @@
 
 @media (max-width: 480px) {
   .main {
-    padding: 12px;
+    padding: 6px 8px;
   }
 
   .top-nav {

@@ -1,14 +1,14 @@
 :root {
-  --bg: #070b1c;
-  --bg-glow: #0c1230;
-  --panel: #0f1535;
-  --panel-2: #151c44;
-  --border: rgba(255,255,255,0.08);
-  --text: #e7eaf3;
-  --muted: #9aa3c7;
-  --accent: #6c7cff;
-  --accent-glow: rgba(108,124,255,0.35);
-  --radius: 18px;
+  --bg: #f5f5f5;
+  --bg-glow: #ffffff;
+  --panel: #ffffff;
+  --panel-2: #fafafa;
+  --border: #e0e0e0;
+  --text: #333333;
+  --muted: #666666;
+  --accent: #4a90e2;
+  --accent-glow: rgba(74,144,226,0.1);
+  --radius: 8px;
 }
 
 * {
@@ -17,13 +17,16 @@
   font-family: Inter, system-ui, sans-serif;
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
 body {
-  background:
-    radial-gradient(circle at 20% 10%, #121a4a, transparent 40%),
-    radial-gradient(circle at 80% 0%, #1b2466, transparent 45%),
-    linear-gradient(180deg, var(--bg-glow), var(--bg));
+  background: var(--bg);
   color: var(--text);
   overflow-x: hidden;
+  min-height: 100vh;
 }
 .link-element {
   text-decoration: none;
@@ -31,13 +34,12 @@ body {
 
 /* footer Styles */
 footer {
-  position: fixed;  /* Fix the footer at the bottom */
-  left: 0;
-  bottom: 20px;  /* 20px gap from the bottom */
+  position: relative;
   width: 100%;
-  background-color: #007bff;  /* Blue background */
-  color: white;
+  background-color: var(--panel);
+  color: var(--text);
   text-align: center;
   padding: 20px;
-  z-index: 1000;  /* Ensure it's above other content */
+  border-top: 1px solid var(--border);
+  margin-top: auto;
 }

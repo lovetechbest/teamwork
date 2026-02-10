@@ -20,7 +20,7 @@ export default function Header({ onPageChange }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { userId, role } = useSelector((state) => state.auth);
-  const userRole = role || sessionStorage.getItem("userRole");
+  const userRole = role || localStorage.getItem("userRole");
   const isHighmanUser = isHighman(userRole);
   const [showChangeUserInfo, setShowChangeUserInfo] = useState(false);
   const [name, setName] = useState('');
@@ -62,7 +62,7 @@ export default function Header({ onPageChange }) {
     setError('');
     try {
       await dispatch(changeUserInfo({
-        id: userId || sessionStorage.getItem('userId'),
+        id: userId || localStorage.getItem('userId'),
         name: name || undefined,
         userID: userID || undefined,
         password: password || undefined,

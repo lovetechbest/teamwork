@@ -1,169 +1,106 @@
 /* Daily Report Page Styles*/
 
 .daily-report {
-  background: linear-gradient(145deg, var(--panel), var(--panel-2));
-  padding: 40px;
+  background: var(--panel);
+  padding: 20px 16px;
   border-radius: var(--radius);
-  max-width: 800px;
-  margin: 30px auto;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
   border: 1px solid var(--border);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.08),
-    0 20px 40px rgba(0,0,0,0.4),
-    0 0 0 1px rgba(108,124,255,0.1);
-  backdrop-filter: blur(10px);
-  position: relative;
-  overflow: hidden;
-}
-
-.daily-report::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  opacity: 0.6;
+  box-sizing: border-box;
 }
 
 .daily-report h2 {
-  color: var(--accent);
+  color: var(--text);
   text-align: center;
-  font-size: 28px;
-  margin-bottom: 30px;
+  font-size: 24px;
+  margin-bottom: 20px;
   font-weight: 700;
-  text-shadow: 0 0 20px var(--accent-glow);
-  letter-spacing: 0.5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .title-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(135deg, var(--accent), #5a66d1);
-  border-radius: 12px;
-  box-shadow: 
-    0 0 20px var(--accent-glow),
-    0 4px 15px rgba(108,124,255,0.4),
-    inset 0 1px 0 rgba(255,255,255,0.2);
-  position: relative;
-  animation: iconPulse 2s ease-in-out infinite;
-  transition: all 0.3s ease;
+  width: 40px;
+  height: 40px;
+  background: var(--accent);
+  border-radius: var(--radius);
 }
 
 .title-icon svg {
   color: white;
-  font-size: 24px;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  font-size: 20px;
 }
 
-.title-icon::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(135deg, var(--accent), #5a66d1, var(--accent));
-  border-radius: 12px;
-  z-index: -1;
-  opacity: 0;
-  animation: iconGlow 2s ease-in-out infinite;
+.daily-report-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  width: 100%;
 }
 
-.title-icon:hover {
-  transform: scale(1.1) rotate(5deg);
-  box-shadow: 
-    0 0 30px var(--accent-glow),
-    0 6px 20px rgba(108,124,255,0.5),
-    inset 0 1px 0 rgba(255,255,255,0.3);
+.daily-report-form-col {
+  flex: 0 0 500px;
+  min-width: 0;
 }
 
-@keyframes iconPulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-@keyframes iconGlow {
-  0%, 100% {
-    opacity: 0;
-    filter: blur(5px);
-  }
-  50% {
-    opacity: 0.6;
-    filter: blur(8px);
-  }
+.daily-report-list-col {
+  flex: 1;
+  min-width: 600px;
+  width: 100%;
 }
 
 .input-section {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  align-items: center;
-  padding: 20px 0;
+  gap: 12px;
+  align-items: stretch;
+  padding: 8px 0;
 }
 
 .date-picker {
-  background: linear-gradient(145deg, var(--panel-2), var(--panel));
+  background: var(--panel-2);
   color: var(--text);
   border: 1px solid var(--border);
-  padding: 14px 18px;
-  border-radius: 12px;
-  font-size: 15px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: 14px;
   width: 100%;
-  max-width: 400px;
   box-sizing: border-box;
-  transition: all 0.3s ease;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+  transition: border-color 0.2s;
 }
 
 .date-picker:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 
-    inset 0 2px 4px rgba(0,0,0,0.2),
-    0 0 0 3px var(--accent-glow),
-    0 0 20px rgba(108,124,255,0.3);
-  background: linear-gradient(145deg, var(--panel-2), var(--panel));
 }
 
 .report-textarea {
-  background: linear-gradient(145deg, var(--panel-2), var(--panel));
+  background: var(--panel-2);
   color: var(--text);
   border: 1px solid var(--border);
-  padding: 16px 18px;
-  border-radius: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
   font-size: 15px;
   width: 100%;
-  max-width: 400px;
   box-sizing: border-box;
   resize: vertical;
-  transition: all 0.3s ease;
-  margin-bottom: 20px;
-  min-height: 120px;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+  transition: border-color 0.2s;
+  margin-bottom: 12px;
+  min-height: 250px;
   font-family: inherit;
+  line-height: 1.6;
 }
 
 .report-textarea:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 
-    inset 0 2px 4px rgba(0,0,0,0.2),
-    0 0 0 3px var(--accent-glow),
-    0 0 20px rgba(108,124,255,0.3);
-  background: linear-gradient(145deg, var(--panel-2), var(--panel));
 }
 
 .report-textarea::placeholder {
@@ -172,141 +109,59 @@
 }
 
 .report-button {
-  background: linear-gradient(135deg, var(--accent), #5a66d1);
+  background: var(--accent);
   color: white;
   border: none;
-  padding: 14px 28px;
-  border-radius: 12px;
-  font-size: 16px;
+  padding: 12px 24px;
+  border-radius: var(--radius);
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background-color 0.2s;
   width: 100%;
-  max-width: 400px;
-  box-shadow: 
-    0 4px 15px rgba(108,124,255,0.4),
-    inset 0 1px 0 rgba(255,255,255,0.2);
-  position: relative;
-  overflow: hidden;
-}
-
-.report-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.5s;
-}
-
-.report-button:hover::before {
-  left: 100%;
 }
 
 .report-button:hover {
-  background: linear-gradient(135deg, #5a66d1, var(--accent));
-  box-shadow: 
-    0 6px 20px rgba(108,124,255,0.5),
-    inset 0 1px 0 rgba(255,255,255,0.2);
-  transform: translateY(-2px);
-}
-
-.report-button:active {
-  transform: translateY(0);
+  background: #357abd;
 }
 
 .report-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  transform: none;
 }
 
 .report-list {
-  margin-top: 40px;
+  margin-top: 0;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  width: 100%;
 }
 
 .no-reports {
   text-align: center;
-  font-size: 16px;
+  font-size: 14px;
   color: var(--muted);
-  padding: 40px 20px;
-  opacity: 0.7;
-}
-
-.report-item {
-  background: linear-gradient(145deg, var(--panel-2), var(--panel));
   padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-  border: 1px solid var(--border);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.05),
-    0 4px 15px rgba(0,0,0,0.2);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
 }
 
-.report-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 3px;
-  height: 100%;
-  background: linear-gradient(180deg, var(--accent), transparent);
-  opacity: 0.6;
-}
+/* Report item styles are in ReportItem.css */
 
-.report-item:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.08),
-    0 8px 25px rgba(0,0,0,0.3),
-    0 0 0 1px rgba(108,124,255,0.2);
-}
-
-.report-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 600;
-  color: var(--accent);
-  margin-bottom: 12px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border);
-}
-
-.report-date {
-  font-size: 15px;
-  letter-spacing: 0.3px;
-}
-
-.modify-btn {
-  background: linear-gradient(135deg, rgba(108,124,255,0.2), rgba(108,124,255,0.1));
-  color: var(--accent);
-  border: 1px solid rgba(108,124,255,0.3);
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 500;
-}
-
-.modify-btn:hover {
-  background: linear-gradient(135deg, rgba(108,124,255,0.3), rgba(108,124,255,0.2));
-  border-color: var(--accent);
-  box-shadow: 0 0 10px rgba(108,124,255,0.3);
-  transform: translateY(-1px);
-}
-
-.report-text {
-  margin-top: 12px;
-  font-size: 15px;
-  color: var(--text);
-  line-height: 1.6;
-  opacity: 0.9;
+@media (max-width: 900px) {
+  .daily-report-layout {
+    flex-direction: column;
+  }
+  
+  .daily-report-form-col {
+    flex: none;
+    width: 100%;
+  }
+  
+  .daily-report-list-col {
+    flex: none;
+    width: 100%;
+  }
+  
+  .report-list {
+    max-height: none;
+  }
 }

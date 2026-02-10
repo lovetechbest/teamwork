@@ -45,15 +45,20 @@ const ProfitPage = () => {
     <div className="profit-page">
       <h1>Profit Overview</h1>
 
-      <div className="chart-container">
-        <Line data={data} options={options} />
-      </div>
-
-      <div className="calendar-container">
-        <h3>Select a Date</h3>
-        <Calendar onChange={onDateChange} value={date} />
-        <div className="selected-date">
-          <p>Selected Date: {date.toDateString()}</p>
+      <div className="profit-layout">
+        <div className="profit-chart-col">
+          <div className="chart-container">
+            <Line data={data} options={options} />
+          </div>
+        </div>
+        <div className="profit-calendar-col">
+          <div className="calendar-container">
+            <h3>Select a Date</h3>
+            <Calendar onChange={onDateChange} value={date} />
+            <div className="selected-date">
+              <p>Selected Date: {date.toDateString()}</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

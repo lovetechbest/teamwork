@@ -1,11 +1,86 @@
 .report-list {
-  margin-top: 40px;
+  margin-top: 0;
+  width: 100%;
+}
+
+.report-list-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: var(--panel);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.toggle-previous-btn {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.toggle-previous-btn:hover {
+  background: #357abd;
+}
+
+.report-filter-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.report-filter-label span {
+  white-space: nowrap;
+}
+
+.report-filter-input {
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.report-filter-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.clear-filter-btn {
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.clear-filter-btn:hover {
+  background: var(--border);
+  border-color: var(--accent);
 }
 
 .no-reports {
   text-align: center;
-  font-size: 16px;
+  font-size: 14px;
   color: var(--muted);
-  padding: 40px 20px;
-  opacity: 0.7;
+  padding: 20px;
+  background: var(--panel);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
 }

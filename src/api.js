@@ -10,10 +10,12 @@ const api = axios.create({
     },
 });
 
+import { getAccessToken, setAccessToken } from './utils/tokenManager';
+
 // Request interceptor to add Authorization header
 api.interceptors.request.use(
     (config) => {
-        const accessToken = sessionStorage.getItem("accessToken");
+        const accessToken = getAccessToken();
         if (accessToken) {
             config.headers.Authorization = `Bearer ${accessToken}`;
         }
@@ -30,21 +32,31 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        // If the error is due to an expired token (401)
-        if (error.response && error.response.status === 401) {
+        // Don't retry refresh endpoint if it fails - avoid infinite loop
+        if (originalRequest.url === "/auth/refresh" || originalRequest.url?.includes("/auth/refresh")) {
+            return Promise.reject(error);
+        }
+
+        // If the error is due to an expired token (401) and we haven't already tried to refresh
+        if (error.response && error.response.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+            
             try {
                 // Call the refresh endpoint through the proxy
-                const refreshResponse = await api.post("/auth/refresh", null, {
+                const refreshResponse = await api.get("/auth/refresh", {
                     withCredentials: true
                 });
 
                 const { accessToken } = refreshResponse.data;
-                sessionStorage.setItem("accessToken", accessToken);
+                if (accessToken) {
+                    setAccessToken(accessToken);
 
-                // Retry the original request with the new access token
-                originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
-                return api(originalRequest);
+                    // Retry the original request with the new access token
+                    originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
+                    return api(originalRequest);
+                }
             } catch (err) {
+                // Refresh failed - redirect to login
                 window.location.href = "/";
                 return Promise.reject(err);
             }

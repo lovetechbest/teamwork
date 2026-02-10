@@ -1,101 +1,160 @@
+.projects-page {
+  padding: 8px 4px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.projects-layout {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.projects-form-col {
+  flex: 0 0 420px;
+  min-width: 0;
+}
+
+.projects-list-col {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+}
+
 .form-container {
-    max-width: 500px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: var(--panel);
-    border-radius: 8px;
+  max-width: 100%;
+  margin: 0;
+  padding: 16px;
+  background-color: var(--panel);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
 }
 
 .form-group {
-    margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 label {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--text);
+  display: block;
+  margin-bottom: 4px;
+  color: var(--text);
+  font-size: 14px;
 }
 
-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    background-color: var(--panel-2);
-    color: var(--text);
+input, textarea, select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--panel-2);
+  color: var(--text);
+  font-size: 14px;
 }
 
-button {
-    padding: 10px 20px;
-    background-color: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+textarea {
+  min-height: 80px;
+  resize: vertical;
 }
 
-.error {
-    color: red;
-    font-size: 0.875rem;
-}
 select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    background-color: var(--panel-2);
-    color: var(--text);
-    height: 120px; /* Allow scrolling */
+  height: 100px;
 }
 
 select option {
-    padding: 5px;
+  padding: 4px;
 }
 
 button {
-    padding: 10px 20px;
-    background-color: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+  padding: 10px 20px;
+  background-color: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
 }
 
-/* For cards */
+button:hover {
+  background: #357abd;
+}
+
+.error {
+  color: #ff4757;
+  font-size: 0.875rem;
+  margin-top: 4px;
+}
+
 .projects-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 18px;
+  margin-top: 0;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  width: 100%;
 }
 
 .project-card {
-    background: linear-gradient(145deg, #1c2b4a, #1a2340); /* dark-blue gradient */
-    border-radius: 12px;
-    padding: 20px;
-    color: #ffffff;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: var(--panel);
+  border-radius: var(--radius);
+  padding: 16px;
+  color: var(--text);
+  border: 1px solid var(--border);
+  transition: border-color 0.2s;
 }
 
 .project-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+  border-color: var(--accent);
 }
 
 .project-card h3 {
-    margin: 0 0 10px 0;
-    color: #00bfff; /* bright accent for project title */
-    font-size: 1.2rem;
+  margin: 0 0 8px 0;
+  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .project-card p {
-    margin: 6px 0;
-    color: #c0c8d4; /* light text for readability */
-    font-size: 0.95rem;
+  margin: 4px 0;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.4;
 }
 
 .project-card strong {
-    color: #ffffff; /* highlight labels */
+  color: var(--text);
+  font-weight: 600;
 }
 
+.project-card a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.project-card a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 1000px) {
+  .projects-layout {
+    flex-direction: column;
+  }
+  
+  .projects-form-col {
+    flex: none;
+    width: 100%;
+  }
+  
+  .projects-list-col {
+    flex: none;
+    width: 100%;
+  }
+  
+  .projects-list {
+    max-height: none;
+  }
+}

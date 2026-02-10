@@ -99,39 +99,43 @@ const ManagerProfitPage = () => {
         </div>
       </div>
 
-      <div className="chart-container">
-        <Line data={chartData} options={options} />
-      </div>
-
-      <div className="user-profits-section">
-        <h2>
-          <FaUsers /> Individual Profit Summary
-        </h2>
-        <div className="user-profits-grid">
-          {groupedByUser.map((user) => (
-            <div key={user.userId} className="user-profit-card">
-              <div className="user-profit-header">
-                <h3>{user.userName}</h3>
-                <span className="user-profit-count">
-                  {user.profits.length} record{user.profits.length !== 1 ? 's' : ''}
-                </span>
-              </div>
-              <div className="user-profit-amount">
-                ${user.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </div>
+      <div className="profit-layout">
+        <div className="profit-chart-col">
+          <div className="chart-container">
+            <Line data={chartData} options={options} />
+          </div>
+          <div className="user-profits-section">
+            <h2>
+              <FaUsers /> Individual Profit Summary
+            </h2>
+            <div className="user-profits-grid">
+              {groupedByUser.map((user) => (
+                <div key={user.userId} className="user-profit-card">
+                  <div className="user-profit-header">
+                    <h3>{user.userName}</h3>
+                    <span className="user-profit-count">
+                      {user.profits.length} record{user.profits.length !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                  <div className="user-profit-amount">
+                    ${user.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
-      </div>
-
-      <div className="calendar-container">
-        <h3>Select a Date Range</h3>
-        <Calendar onChange={onDateChange} value={date} />
-        <div className="selected-date">
-          <p>Selected Date: {date.toDateString()}</p>
-          {dateRange.startDate && dateRange.endDate && (
-            <p>Range: {dateRange.startDate} to {dateRange.endDate}</p>
-          )}
+        <div className="profit-calendar-col">
+          <div className="calendar-container">
+            <h3>Select a Date Range</h3>
+            <Calendar onChange={onDateChange} value={date} />
+            <div className="selected-date">
+              <p>Selected Date: {date.toDateString()}</p>
+              {dateRange.startDate && dateRange.endDate && (
+                <p>Range: {dateRange.startDate} to {dateRange.endDate}</p>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

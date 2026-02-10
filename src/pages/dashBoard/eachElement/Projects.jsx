@@ -1,19 +1,21 @@
 import React from 'react';
+import { FaFolderOpen } from 'react-icons/fa';
+import { useProjectStats } from '../../../features/projects/hooks/useProjectStats';
+import '../../../styles/dash-board/dash/developer-daily-report.css';
 
 export default function Projects() {
+  const { createdCount, loading, error } = useProjectStats();
+
   return (
     <div className="card">
       <h3>Projects</h3>
       <div className="daily-report-content">
         <img src="/dash-board/project.png" alt="Projects" className="card-image" />
-        <div className="daily-report-announcements">
-          <div className="announcement reported">
-            <div className="count">8</div>
-            <div className="label">Completed</div>
-          </div>
-          <div className="announcement not-reported">
-            <div className="count">5</div>
-            <div className="label">In Progress</div>
+        {error && <p className="daily-report-error">{error}</p>}
+        <div className="daily-report-status">
+          <div className="status-indicator reported">
+            <FaFolderOpen className="status-icon check-icon" />
+            <div className="label">{loading ? '—' : createdCount} Created</div>
           </div>
         </div>
       </div>

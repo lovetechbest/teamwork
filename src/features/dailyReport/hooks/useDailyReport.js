@@ -11,7 +11,7 @@ export const useDailyReport = (options = {}) => {
   const dispatch = useDispatch();
   const { userId, user } = useSelector(state => state.auth);
   const [today, setToday] = useState(null);
-  const currentUserId = userId || user?.id || user?.userID || sessionStorage.getItem("userId");
+  const currentUserId = userId || user?.id || user?.userID || localStorage.getItem("userId");
   const storageKey = getStorageKey(currentUserId);
   
   const [reportText, setReportText] = useState('');

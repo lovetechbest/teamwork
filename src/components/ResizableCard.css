@@ -1,0 +1,67 @@
+.resizable-card {
+  position: relative;
+  overflow: visible;
+  transition: height 0.1s ease-out;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 0;
+}
+
+.resizable-card.resizing {
+  transition: none;
+  user-select: none;
+}
+
+.resize-handle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  cursor: nwse-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--panel-2);
+  border-top-left-radius: var(--radius);
+  border-bottom-right-radius: var(--radius);
+  color: var(--muted);
+  opacity: 0;
+  transition: opacity 0.2s, background 0.2s;
+  z-index: 10;
+}
+
+.resizable-card:hover .resize-handle {
+  opacity: 1;
+}
+
+.resize-handle:hover {
+  background: var(--accent);
+  color: white;
+  opacity: 1;
+}
+
+.resize-handle:active {
+  background: var(--accent);
+  color: white;
+}
+
+.resize-handle svg {
+  width: 12px;
+  height: 12px;
+}
+
+.resizing .resize-handle {
+  opacity: 1;
+  background: var(--accent);
+  color: white;
+}
+
+.resizable-card > .card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: visible;
+}

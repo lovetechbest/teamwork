@@ -20,7 +20,7 @@ export default function DeveloperDailyReport() {
   const [yesterdayStr, setYesterdayStr] = useState('');
   const dispatch = useDispatch();
   const { userId, user } = useSelector(state => state.auth);
-  const currentUserId = userId || user?.id || user?.userID || sessionStorage.getItem("userId");
+  const currentUserId = userId || user?.id || user?.userID || localStorage.getItem("userId");
   const storageKey = getStorageKey(currentUserId);
 
   useEffect(() => {
