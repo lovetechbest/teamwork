@@ -1,6 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { fetchProjects } from '../../../store/projects/projectActions';
 
 export default function Projects() {
+  const [createdCount, setCreatedCount] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchProjects({})
+      .then((list) => {
+        if (!cancelled) setCreatedCount(Array.isArray(list) ? list.length : 0);
+      })
+      .catch(() => {
+        if (!cancelled) setCreatedCount(0);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
   return (
     <div className="card">
       <h3>Projects</h3>
@@ -8,12 +23,8 @@ export default function Projects() {
         <img src="/dash-board/project.png" alt="Projects" className="card-image" />
         <div className="daily-report-announcements">
           <div className="announcement reported">
-            <div className="count">8</div>
-            <div className="label">Completed</div>
-          </div>
-          <div className="announcement not-reported">
-            <div className="count">5</div>
-            <div className="label">In Progress</div>
+            <div className="count">{createdCount ?? '—'}</div>
+            <div className="label">Created</div>
           </div>
         </div>
       </div>

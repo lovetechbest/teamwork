@@ -5,11 +5,25 @@ import { useManagerDailyReports } from './hooks/useManagerDailyReports';
 import { useDailyReport } from './hooks/useDailyReport';
 import { getAccessToken, setUserId } from '../../store/auth/authStorage';
 import { deleteDailyReports, submitDailyReport, updateDailyReport, fetchReportForDate, getServerDay, normalizeDate } from '../../store/reports/reportActions';
+import { fetchUsers } from '../../store/users/userActions';
 import ReportForm from './components/ReportForm';
 import ReportList from './components/ReportList';
 import { FaUsers, FaTrash, FaFilter, FaUser, FaSearchPlus } from 'react-icons/fa';
 import './DailyReportPage.css';
 import './ManagerDailyReportPage.css';
+
+/** Build map: userId/userID -> full name for report labels */
+function buildUserIdToName(users) {
+  const map = {};
+  (users || []).forEach((u) => {
+    const name = u.name || u.userName || '';
+    const id = u._id || u.id || u.uniqueID;
+    const loginId = u.userID || u.userId || u.username;
+    if (id) map[id] = name;
+    if (loginId) map[loginId] = name;
+  });
+  return map;
+}
 
 const formatDateTime = (iso) => {
   if (!iso) return '—';
@@ -41,9 +55,20 @@ const ManagerDailyReportPage = () => {
       };
 
   const { reports, loading, error, refreshReports } = useManagerDailyReports(apiFilters);
+  const [userIdToName, setUserIdToName] = useState({});
   const [deleting, setDeleting] = useState(null);
   const [myReportCollapsed, setMyReportCollapsed] = useState(false);
   const [expandedReport, setExpandedReport] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchUsers()
+      .then((data) => {
+        if (!cancelled) setUserIdToName(buildUserIdToName(Array.isArray(data) ? data : []));
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
 
   const {
     today,
@@ -69,12 +94,16 @@ const ManagerDailyReportPage = () => {
         r.userName || r.user_name || r.name ||
         (typeof r.user === 'object' ? r.user?.name : null) ||
         (userId ? `User ${String(userId).slice(-8)}` : 'Unknown');
+      const fullName = userIdToName[userId] ?? userIdToName[userName] ?? null;
       const reportDate = normalizeDate(r.date || r.reportDate);
-      return { id: r._id || r.id, userId, userName, date: reportDate, text: r.main_content || r.content || r.text, createdAt: r.createdAt, updatedAt: r.updatedAt };
+      return { id: r._id || r.id, userId, userName, fullName, date: reportDate, text: r.main_content || r.content || r.text, createdAt: r.createdAt, updatedAt: r.updatedAt };
     })
     .sort((a, b) => (new Date(b.date) || 0) - (new Date(a.date) || 0));
 
-  const uniqueUsers = [...new Map(flatReports.map((r) => [r.userId, { userId: r.userId, userName: r.userName }])).values()];
+  const uniqueUsers = [...new Map(flatReports.map((r) => [
+    r.userId,
+    { userId: r.userId, userName: r.userName, fullName: r.fullName }
+  ])).values()];
 
   const handleReport = async () => {
     if (!today) return;
@@ -197,7 +226,7 @@ const ManagerDailyReportPage = () => {
               className={`user-chip ${filters.filter_userUniqueID === u.userId ? 'active' : ''}`}
               onClick={() => selectUser(u.userId)}
             >
-              {u.userName}
+              {u.fullName || u.userName}
             </button>
           ))}
         </div>
@@ -247,7 +276,7 @@ const ManagerDailyReportPage = () => {
                   title="Click to view full report"
                 >
                   <div className="report-card-header">
-                    <span className="report-card-user">{r.userName}</span>
+                    <span className="report-card-user">{r.fullName || r.userName}</span>
                     <span className="report-card-date">{r.date}</span>
                     <button
                       className="report-card-delete"
@@ -279,7 +308,7 @@ const ManagerDailyReportPage = () => {
         <div className="modal-overlay report-expand-modal-overlay" onClick={() => setExpandedReport(null)}>
           <div className="report-expand-modal" onClick={e => e.stopPropagation()}>
             <div className="report-expand-header">
-              <h3>{expandedReport.userName}</h3>
+              <h3>{expandedReport.fullName || expandedReport.userName}</h3>
               <span className="report-expand-date">{expandedReport.date}</span>
               <button className="report-expand-close" onClick={() => setExpandedReport(null)}>×</button>
             </div>
