@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { getAccessToken, setUserId } from '../../store/auth/authStorage';
 import { submitDailyReport, updateDailyReport, fetchReportForDate } from '../../store/reports/reportActions';
 import { useDailyReport } from './hooks/useDailyReport';
 import ReportForm from './components/ReportForm';
 import ReportList from './components/ReportList';
-import { FaFileAlt } from 'react-icons/fa';
+import { FaFileAlt, FaHistory, FaEyeSlash } from 'react-icons/fa';
 import './DailyReportPage.css';
 
 const DailyReportPage = () => {
   const dispatch = useDispatch();
+  const [showPreviousReports, setShowPreviousReports] = useState(true);
   const {
     today,
     reportText,
@@ -118,30 +119,45 @@ const DailyReportPage = () => {
 
   return (
     <div className="daily-report">
-      <h2>
-        <span className="title-icon">
-          <FaFileAlt />
-        </span>
-        Daily Report
-      </h2>
-
-      <ReportForm
-        today={today}
-        reportText={reportText}
-        isEditingToday={isEditingToday}
-        errorMessage={errorMessage}
-        loading={loadingToday}
-        onTextChange={handleTextChange}
-        onSubmit={handleReport}
-        isModifying={!!existingReport && isEditingToday}
-      />
-
-      <ReportList
-        reports={reports}
-        today={today}
-        onModify={enableModify}
-        showTimestamps
-      />
+      <aside className="daily-report__sidebar">
+        <div className="daily-report-box">
+          <h2 className="daily-report-box__title">
+            <span className="title-icon">
+              <FaFileAlt />
+            </span>
+            Daily Report
+          </h2>
+          <ReportForm
+            today={today}
+            reportText={reportText}
+            isEditingToday={isEditingToday}
+            errorMessage={errorMessage}
+            loading={loadingToday}
+            onTextChange={handleTextChange}
+            onSubmit={handleReport}
+            isModifying={!!existingReport && isEditingToday}
+            compact
+          />
+        </div>
+      </aside>
+      <div className="daily-report__main">
+        <button
+          type="button"
+          className="toggle-previous-reports"
+          onClick={() => setShowPreviousReports((v) => !v)}
+        >
+          {showPreviousReports ? <FaEyeSlash /> : <FaHistory />}
+          {showPreviousReports ? ' Hide previous reports' : ' Show previous reports'}
+        </button>
+        {showPreviousReports && (
+          <ReportList
+            reports={reports}
+            today={today}
+            onModify={enableModify}
+            showTimestamps
+          />
+        )}
+      </div>
     </div>
   );
 };

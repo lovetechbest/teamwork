@@ -46,7 +46,7 @@
 .card h3 {
   font-size: 16px;
   font-weight: 600;
-  color: #f1f3ff;
+  color: var(--text);
   display: flex;
   align-items: center;
   gap: 8px;

@@ -30,6 +30,44 @@ const formatDateTime = (iso) => {
   return new Date(iso).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' });
 };
 
+function ReportCard({ r, onExpand, onDelete, deleting, formatDateTime }) {
+  return (
+    <div
+      className="report-card"
+      onClick={() => onExpand(r)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === 'Enter' && onExpand(r)}
+      title="Click to view full report"
+    >
+      <div className="report-card-header">
+        <span className="report-card-user">{r.fullName || r.userName}</span>
+        <span className="report-card-date">{r.date}</span>
+        <button
+          className="report-card-delete"
+          onClick={(e) => { e.stopPropagation(); onDelete(r.id); }}
+          disabled={deleting === r.id}
+          title="Delete"
+        >
+          <FaTrash />
+        </button>
+      </div>
+      {(r.createdAt || r.updatedAt) && (
+        <div className="report-card-meta">
+          {r.createdAt && <span>Created: {formatDateTime(r.createdAt)}</span>}
+          {r.updatedAt && r.createdAt && new Date(r.updatedAt).getTime() !== new Date(r.createdAt).getTime() && (
+            <span>Updated: {formatDateTime(r.updatedAt)}</span>
+          )}
+        </div>
+      )}
+      <p className="report-card-text">{r.text}</p>
+      <div className="report-card-expand-hint">
+        <FaSearchPlus /> View full report
+      </div>
+    </div>
+  );
+}
+
 const ManagerDailyReportPage = () => {
   const dispatch = useDispatch();
   const [filters, setFilters] = useState({ startDate: '', endDate: '', date: '', filter_userUniqueID: '' });
@@ -58,7 +96,9 @@ const ManagerDailyReportPage = () => {
   const [userIdToName, setUserIdToName] = useState({});
   const [deleting, setDeleting] = useState(null);
   const [myReportCollapsed, setMyReportCollapsed] = useState(false);
+  const [showMyPreviousReports, setShowMyPreviousReports] = useState(true);
   const [expandedReport, setExpandedReport] = useState(null);
+  const [expandedUsers, setExpandedUsers] = useState({});
 
   useEffect(() => {
     let cancelled = false;
@@ -104,6 +144,26 @@ const ManagerDailyReportPage = () => {
     r.userId,
     { userId: r.userId, userName: r.userName, fullName: r.fullName }
   ])).values()];
+
+  const reportsByUser = React.useMemo(() => {
+    const map = new Map();
+    flatReports.forEach((r) => {
+      const key = r.userId ?? 'unknown';
+      if (!map.has(key)) {
+        map.set(key, { userId: r.userId, fullName: r.fullName, userName: r.userName, reports: [] });
+      }
+      map.get(key).reports.push(r);
+    });
+    return [...map.values()].sort((a, b) => {
+      const na = (a.fullName || a.userName || '').toLowerCase();
+      const nb = (b.fullName || b.userName || '').toLowerCase();
+      return na.localeCompare(nb);
+    });
+  }, [flatReports]);
+
+  const toggleUserExpanded = (userId) => {
+    setExpandedUsers((prev) => ({ ...prev, [userId]: !prev[userId] }));
+  };
 
   const handleReport = async () => {
     if (!today) return;
@@ -250,8 +310,19 @@ const ManagerDailyReportPage = () => {
                 isModifying={!!existingReport && isEditingToday}
                 compact
               />
-              <h4 className="manager-my-reports-title">My Reports</h4>
-              <ReportList reports={myReports} today={today} onModify={enableModify} showTimestamps />
+              <div className="manager-my-reports-header">
+                <h4 className="manager-my-reports-title">My Reports</h4>
+                <button
+                  type="button"
+                  className="manager-toggle-my-reports"
+                  onClick={() => setShowMyPreviousReports((v) => !v)}
+                >
+                  {showMyPreviousReports ? 'Hide' : 'Show'}
+                </button>
+              </div>
+              {showMyPreviousReports && (
+                <ReportList reports={myReports} today={today} onModify={enableModify} showTimestamps />
+              )}
             </>
           )}
         </aside>
@@ -263,44 +334,40 @@ const ManagerDailyReportPage = () => {
             <div className="error-msg">{error} <button onClick={refreshReports}>Retry</button></div>
           ) : flatReports.length === 0 ? (
             <div className="no-reports-msg">No reports in this period.</div>
-          ) : (
+          ) : filters.filter_userUniqueID ? (
             <div className="manager-reports-grid">
               {flatReports.map((r) => (
-                <div
-                  key={r.id}
-                  className="report-card"
-                  onClick={() => setExpandedReport(r)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => e.key === 'Enter' && setExpandedReport(r)}
-                  title="Click to view full report"
-                >
-                  <div className="report-card-header">
-                    <span className="report-card-user">{r.fullName || r.userName}</span>
-                    <span className="report-card-date">{r.date}</span>
-                    <button
-                      className="report-card-delete"
-                      onClick={(e) => { e.stopPropagation(); handleDelete(r.id); }}
-                      disabled={deleting === r.id}
-                      title="Delete"
-                    >
-                      <FaTrash />
-                    </button>
-                  </div>
-                  {(r.createdAt || r.updatedAt) && (
-                    <div className="report-card-meta">
-                      {r.createdAt && <span>Created: {formatDateTime(r.createdAt)}</span>}
-                      {r.updatedAt && r.createdAt && new Date(r.updatedAt).getTime() !== new Date(r.createdAt).getTime() && (
-                        <span>Updated: {formatDateTime(r.updatedAt)}</span>
-                      )}
-                    </div>
-                  )}
-                  <p className="report-card-text">{r.text}</p>
-                  <div className="report-card-expand-hint">
-                    <FaSearchPlus /> View full report
-                  </div>
-                </div>
+                <ReportCard key={r.id} r={r} onExpand={setExpandedReport} onDelete={handleDelete} deleting={deleting} formatDateTime={formatDateTime} />
               ))}
+            </div>
+          ) : (
+            <div className="manager-reports-by-user">
+              {reportsByUser.map((group) => {
+                const isExpanded = expandedUsers[group.userId];
+                return (
+                  <div key={group.userId} className="user-report-group">
+                    <button
+                      type="button"
+                      className="user-report-group__header"
+                      onClick={() => toggleUserExpanded(group.userId)}
+                      aria-expanded={isExpanded}
+                    >
+                      <span className="user-report-group__name">{group.fullName || group.userName}</span>
+                      <span className="user-report-group__count">{group.reports.length} report{group.reports.length !== 1 ? 's' : ''}</span>
+                      <span className="user-report-group__chevron">{isExpanded ? '▼' : '▶'}</span>
+                    </button>
+                    {isExpanded && (
+                      <div className="user-report-group__body">
+                        <div className="manager-reports-grid">
+                          {group.reports.map((r) => (
+                            <ReportCard key={r.id} r={r} onExpand={setExpandedReport} onDelete={handleDelete} deleting={deleting} formatDateTime={formatDateTime} />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
 

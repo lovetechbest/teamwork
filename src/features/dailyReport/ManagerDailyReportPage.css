@@ -1,8 +1,16 @@
-/* Manager Daily Report - Compact, Impressive Layout */
+/* Manager Daily Report - Wide team report area (restore block layout, unaffected by developer page CSS) */
+
+.daily-report.manager-daily-report {
+  display: block;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 16px;
+}
 
 .manager-daily-report {
   padding: 16px;
-  max-width: 1200px;
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
 .manager-bar {
@@ -64,6 +72,12 @@
   cursor: pointer;
 }
 
+/* Normal state: use theme text so "Range" / "Date" are readable (not white) */
+.filter-mode-btn:not(.active),
+[data-theme="light"] .filter-mode-btn:not(.active) {
+  color: var(--text) !important;
+}
+
 .filter-mode-btn:hover {
   background: rgba(108, 124, 255, 0.1);
 }
@@ -117,7 +131,7 @@
 }
 
 .manager-my-report-form {
-  flex: 0 0 360px;
+  flex: 0 0 300px;
   padding: 12px;
   background: var(--panel-2);
   border-radius: 8px;
@@ -153,19 +167,99 @@
 }
 
 .manager-my-report-form .report-textarea {
-  min-height: 60px;
+  min-height: 280px;
+  resize: vertical;
+}
+
+.manager-my-reports-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 12px 0 6px;
 }
 
 .manager-my-reports-title {
   font-size: 0.85rem;
   color: var(--muted);
-  margin: 12px 0 6px;
+  margin: 0;
   font-weight: 600;
+}
+
+.manager-toggle-my-reports {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  background: rgba(108, 124, 255, 0.12);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.manager-toggle-my-reports:hover {
+  background: rgba(108, 124, 255, 0.2);
 }
 
 .manager-team-reports {
   flex: 1;
   min-width: 0;
+  max-width: 100%;
+}
+
+.manager-reports-by-user {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.user-report-group {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.user-report-group__header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 600;
+  text-align: left;
+  transition: background 0.2s;
+}
+
+.user-report-group__header:hover {
+  background: rgba(108, 124, 255, 0.08);
+}
+
+.user-report-group__name {
+  flex: 1;
+  color: var(--accent);
+}
+
+.user-report-group__count {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.user-report-group__chevron {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.user-report-group__body {
+  padding: 0 12px 12px;
+  border-top: 1px solid var(--border);
 }
 
 .loading-msg,
@@ -189,8 +283,8 @@
 
 .manager-reports-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(560px, 1fr));
+  gap: 14px;
 }
 
 .report-card {
@@ -294,7 +388,7 @@
   background: linear-gradient(180deg, var(--panel-2), var(--panel));
   border: 1px solid var(--border);
   border-radius: 12px;
-  max-width: 640px;
+  max-width: 720px;
   width: 100%;
   max-height: 85vh;
   display: flex;

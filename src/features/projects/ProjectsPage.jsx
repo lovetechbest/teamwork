@@ -52,25 +52,29 @@ const ProjectsPage = () => {
 
   return (
     <div className="projects-page">
-      <ProjectFilters
-        filters={filterInputs}
-        onChange={setFilterInputs}
-        onClear={handleClearFilters}
-        showUserIDFilter={showUserIDFilter}
-      />
-      <ProjectForm onSubmit={addProject} disabled={loading} />
-      {error && <p className="error-message">{error}</p>}
-      {fetchError && <p className="error-message">{fetchError}</p>}
-      {fetchLoading ? (
-        <p className="loading-message">Loading projects…</p>
-      ) : (
-        <ProjectList
-          projects={projects}
-          updateProject={updateProject}
-          deleteProject={deleteProject}
-          loading={loading}
+      <aside className="projects-page__sidebar">
+        <ProjectForm onSubmit={addProject} disabled={loading} />
+        {error && <p className="error-message">{error}</p>}
+      </aside>
+      <div className="projects-page__main">
+        <ProjectFilters
+          filters={filterInputs}
+          onChange={setFilterInputs}
+          onClear={handleClearFilters}
+          showUserIDFilter={showUserIDFilter}
         />
-      )}
+        {fetchError && <p className="error-message">{fetchError}</p>}
+        {fetchLoading ? (
+          <p className="loading-message">Loading projects…</p>
+        ) : (
+          <ProjectList
+            projects={projects}
+            updateProject={updateProject}
+            deleteProject={deleteProject}
+            loading={loading}
+          />
+        )}
+      </div>
     </div>
   );
 };

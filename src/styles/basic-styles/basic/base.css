@@ -29,6 +29,58 @@
   --header-bg: linear-gradient(180deg, #e5e7eb, #f9fafb);
 }
 
+/* Light mode: ensure all content text is dark (override hardcoded white) */
+[data-theme="light"] .main,
+[data-theme="light"] .main h1,
+[data-theme="light"] .main h2,
+[data-theme="light"] .main h3,
+[data-theme="light"] .main h4,
+[data-theme="light"] .main p,
+[data-theme="light"] .main label,
+[data-theme="light"] .main td,
+[data-theme="light"] .main th,
+[data-theme="light"] .main li,
+[data-theme="light"] .main span,
+[data-theme="light"] .main div {
+  color: var(--text);
+}
+[data-theme="light"] .card,
+[data-theme="light"] .card * {
+  color: var(--text);
+}
+/* Keep white text on primary/solid buttons in light mode */
+[data-theme="light"] .card button,
+[data-theme="light"] .main button[type="submit"],
+[data-theme="light"] .main .modal-actions button[type="submit"],
+[data-theme="light"] .main [class*="btn"]:not([class*="outline"]),
+[data-theme="light"] .main [class*="button"]:not([class*="outline"]),
+[data-theme="light"] .main a[class*="btn"],
+[data-theme="light"] .main .project-card__btn--modify {
+  color: #fff;
+}
+[data-theme="light"] .main .project-card__btn--delete {
+  color: #dc3545;
+}
+[data-theme="light"] .main a:not([class*="btn"]) {
+  color: var(--accent);
+}
+/* Project cards and other page content that use hardcoded white */
+[data-theme="light"] .project-card {
+  background: linear-gradient(145deg, var(--panel-2), var(--panel));
+}
+[data-theme="light"] .project-card,
+[data-theme="light"] .project-card p,
+[data-theme="light"] .project-card strong {
+  color: var(--text);
+}
+[data-theme="light"] .project-card h3 {
+  color: var(--accent);
+}
+/* Page title icons and other UI that used white */
+[data-theme="light"] .title-icon svg {
+  color: var(--text);
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
