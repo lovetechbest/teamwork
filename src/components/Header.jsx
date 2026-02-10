@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,10 +12,13 @@ import {
   FaEuroSign,
   FaSignOutAlt,
   FaUserEdit,
-  FaUserCog
+  FaUserCog,
+  FaMoon,
+  FaSun
 } from 'react-icons/fa';
 import { getUserId, getUserRole } from '../store/auth/authStorage';
 import { isHighman } from '../utils/roles';
+import { getTheme, setTheme } from '../utils/theme';
 
 export default function Header({ onPageChange }) {
   const dispatch = useDispatch();
@@ -24,6 +27,16 @@ export default function Header({ onPageChange }) {
   const userRole = role || getUserRole();
   const isHighmanUser = isHighman(userRole);
   const [showChangeUserInfo, setShowChangeUserInfo] = useState(false);
+  const [theme, setThemeState] = useState(getTheme);
+
+  useEffect(() => {
+    setThemeState(getTheme());
+  }, []);
+
+  const handleTheme = (t) => {
+    setTheme(t);
+    setThemeState(t);
+  };
   const [name, setName] = useState('');
   const [userID, setUserID] = useState('');
   const [password, setPassword] = useState('');
@@ -116,6 +129,28 @@ export default function Header({ onPageChange }) {
             Change UserInfo
           </button>
         )}
+        <div className="theme-switcher">
+          <button
+            type="button"
+            className={`theme-btn ${theme === 'dark' ? 'active' : ''}`}
+            onClick={() => handleTheme('dark')}
+            title="Dark mode"
+            aria-label="Dark mode"
+          >
+            <FaMoon className="theme-btn-icon" />
+            <span>Dark</span>
+          </button>
+          <button
+            type="button"
+            className={`theme-btn ${theme === 'light' ? 'active' : ''}`}
+            onClick={() => handleTheme('light')}
+            title="Light mode"
+            aria-label="Light mode"
+          >
+            <FaSun className="theme-btn-icon" />
+            <span>Light</span>
+          </button>
+        </div>
         <button onClick={handleLogout} className="logout-button">
           <FaSignOutAlt className="nav-icon" />
           Logout

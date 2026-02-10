@@ -1,4 +1,6 @@
-:root {
+/* Default: dark mode */
+:root,
+[data-theme="dark"] {
   --bg: #070b1c;
   --bg-glow: #0c1230;
   --panel: #0f1535;
@@ -9,6 +11,22 @@
   --accent: #6c7cff;
   --accent-glow: rgba(108,124,255,0.35);
   --radius: 18px;
+  --header-bg: linear-gradient(180deg, #0c1235, #080c22);
+}
+
+/* Light (day) mode */
+[data-theme="light"] {
+  --bg: #f3f4f6;
+  --bg-glow: #e5e7eb;
+  --panel: #ffffff;
+  --panel-2: #e5e7eb;
+  --border: rgba(15,23,42,0.12);
+  --text: #0f172a;
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --accent-glow: rgba(37,99,235,0.25);
+  --radius: 18px;
+  --header-bg: linear-gradient(180deg, #e5e7eb, #f9fafb);
 }
 
 * {
@@ -19,8 +37,8 @@
 
 body {
   background:
-    radial-gradient(circle at 20% 10%, #121a4a, transparent 40%),
-    radial-gradient(circle at 80% 0%, #1b2466, transparent 45%),
+    radial-gradient(circle at 20% 10%, var(--bg-glow), transparent 40%),
+    radial-gradient(circle at 80% 0%, var(--panel-2), transparent 45%),
     linear-gradient(180deg, var(--bg-glow), var(--bg));
   color: var(--text);
   overflow-x: hidden;
