@@ -27,9 +27,10 @@ const getInitialState = () => {
   }
 };
 
-const initialState = getInitialState();
-
-export default function authReducer(state = initialState, action) {
+export default function authReducer(state, action) {
+  if (state === undefined) {
+    state = getInitialState();
+  }
   switch (action.type) {
     case 'LOGIN_REQUEST':
     case 'SIGNUP_REQUEST':

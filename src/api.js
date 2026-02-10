@@ -1,6 +1,6 @@
 // src/api.js
 import axios from "axios";
-import { getAccessToken, setAccessToken } from "./store/auth/authStorage";
+import { getAccessToken, setAccessToken, clearAuth } from "./store/auth/authStorage";
 
 // Use /api prefix which will be proxied by Vite to the backend server
 const api = axios.create({
@@ -25,33 +25,65 @@ api.interceptors.request.use(
     }
 );
 
-// Response interceptor to handle 401 errors globally and refresh access token
+// Single in-flight refresh: only one /auth/refresh at a time, others wait and then retry
+let refreshPromise = null;
+
+function isRefreshRequest(config) {
+    const url = config?.url ?? "";
+    return url.includes("auth/refresh");
+}
+
+function doRefresh() {
+    if (refreshPromise) return refreshPromise;
+    refreshPromise = api
+        .post("/auth/refresh", null, { withCredentials: true })
+        .then((res) => {
+            const token = res.data?.accessToken;
+            if (!token) throw new Error("No token");
+            setAccessToken(token);
+            return token;
+        })
+        .finally(() => {
+            refreshPromise = null;
+        });
+    return refreshPromise;
+}
+
+function redirectToLogin() {
+    clearAuth();
+    if (typeof window !== "undefined") window.location.replace("/");
+}
+
+// Response interceptor: on 401, refresh once then retry; if refresh fails, redirect to login
 api.interceptors.response.use(
     (response) => response,
     async (error) => {
-        const originalRequest = error.config;
-
-        // If the error is due to an expired token (401)
-        if (error.response && error.response.status === 401) {
-            try {
-                // Call the refresh endpoint (refresh token in httpOnly cookie withCredentials)
-                const refreshResponse = await api.post("/auth/refresh", null, {
-                    withCredentials: true
-                });
-
-                const { accessToken } = refreshResponse.data;
-                setAccessToken(accessToken);
-
-                // Retry the original request with the new access token
-                originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
-                return api(originalRequest);
-            } catch (err) {
-                window.location.href = "/";
-                return Promise.reject(err);
-            }
+        const config = error.config;
+        if (error.response?.status !== 401 || !config) {
+            return Promise.reject(error);
         }
 
-        return Promise.reject(error);
+        // Never intercept the refresh request itself — go straight to login
+        if (isRefreshRequest(config)) {
+            redirectToLogin();
+            return Promise.reject(error);
+        }
+
+        // Already retried this request — don’t loop
+        if (config._retry) {
+            return Promise.reject(error);
+        }
+
+        config._retry = true;
+
+        try {
+            const newToken = await doRefresh();
+            config.headers.Authorization = `Bearer ${newToken}`;
+            return api(config);
+        } catch (err) {
+            redirectToLogin();
+            return Promise.reject(err);
+        }
     }
 );
 
