@@ -162,9 +162,9 @@ export const updateDailyReport = (reportId, payload) => async (dispatch) => {
       return null;
     }
 
-    const res = await api.put(`/dayreports/update/${reportId}`, {
-      main_content: payload.main_content,
-    });
+    const body = { main_content: payload.main_content };
+    body.require = payload.require !== undefined ? payload.require : '';
+    const res = await api.put(`/dayreports/update/${reportId}`, body);
 
     dispatch({
       type: REPORT_SUBMIT_SUCCESS,

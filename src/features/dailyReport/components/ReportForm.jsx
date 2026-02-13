@@ -4,10 +4,12 @@ import './ReportForm.css';
 const ReportForm = ({ 
   today, 
   reportText, 
+  requirementText = '',
   isEditingToday, 
   errorMessage,
   loading = false,
   onTextChange, 
+  onRequirementChange,
   onSubmit,
   isModifying = false,
   compact = false
@@ -31,6 +33,16 @@ const ReportForm = ({
           onChange={onTextChange}
           rows={compact ? 3 : 5}
           className="report-textarea"
+          disabled={!isEditingToday || loading}
+        />
+
+        <label className="report-form-requirement-label">Requirement (optional)</label>
+        <textarea
+          placeholder="e.g. I need more food."
+          value={requirementText}
+          onChange={onRequirementChange || (() => {})}
+          rows={compact ? 2 : 3}
+          className="report-textarea report-requirement-textarea"
           disabled={!isEditingToday || loading}
         />
 

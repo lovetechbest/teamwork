@@ -14,6 +14,7 @@ const DailyReportPage = () => {
   const {
     today,
     reportText,
+    requirementText,
     isEditingToday,
     errorMessage,
     reports,
@@ -21,6 +22,7 @@ const DailyReportPage = () => {
     loadingToday,
     setErrorMessage,
     handleTextChange,
+    handleRequirementChange,
     enableModify,
     addReport,
   } = useDailyReport();
@@ -62,6 +64,7 @@ const DailyReportPage = () => {
       date: today,
       id: finalUserId,
       main_content: reportText,
+      require: requirementText != null ? requirementText.trim() : '',
     };
 
     setErrorMessage('');
@@ -130,10 +133,12 @@ const DailyReportPage = () => {
           <ReportForm
             today={today}
             reportText={reportText}
+            requirementText={requirementText}
             isEditingToday={isEditingToday}
             errorMessage={errorMessage}
             loading={loadingToday}
             onTextChange={handleTextChange}
+            onRequirementChange={handleRequirementChange}
             onSubmit={handleReport}
             isModifying={!!existingReport && isEditingToday}
             compact

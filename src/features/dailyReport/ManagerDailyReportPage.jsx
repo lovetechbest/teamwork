@@ -4,11 +4,11 @@ import { useDispatch } from 'react-redux';
 import { useManagerDailyReports } from './hooks/useManagerDailyReports';
 import { useDailyReport } from './hooks/useDailyReport';
 import { getAccessToken, setUserId } from '../../store/auth/authStorage';
-import { deleteDailyReports, submitDailyReport, updateDailyReport, fetchReportForDate, getServerDay, normalizeDate } from '../../store/reports/reportActions';
+import { submitDailyReport, updateDailyReport, fetchReportForDate, getServerDay, normalizeDate } from '../../store/reports/reportActions';
 import { fetchUsers } from '../../store/users/userActions';
 import ReportForm from './components/ReportForm';
 import ReportList from './components/ReportList';
-import { FaUsers, FaTrash, FaFilter, FaUser, FaSearchPlus } from 'react-icons/fa';
+import { FaUsers, FaFilter, FaUser, FaSearchPlus } from 'react-icons/fa';
 import './DailyReportPage.css';
 import './ManagerDailyReportPage.css';
 
@@ -30,7 +30,7 @@ const formatDateTime = (iso) => {
   return new Date(iso).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' });
 };
 
-function ReportCard({ r, onExpand, onDelete, deleting, formatDateTime }) {
+function ReportCard({ r, onExpand, formatDateTime }) {
   return (
     <div
       className="report-card"
@@ -43,14 +43,6 @@ function ReportCard({ r, onExpand, onDelete, deleting, formatDateTime }) {
       <div className="report-card-header">
         <span className="report-card-user">{r.fullName || r.userName}</span>
         <span className="report-card-date">{r.date}</span>
-        <button
-          className="report-card-delete"
-          onClick={(e) => { e.stopPropagation(); onDelete(r.id); }}
-          disabled={deleting === r.id}
-          title="Delete"
-        >
-          <FaTrash />
-        </button>
       </div>
       {(r.createdAt || r.updatedAt) && (
         <div className="report-card-meta">
@@ -61,6 +53,11 @@ function ReportCard({ r, onExpand, onDelete, deleting, formatDateTime }) {
         </div>
       )}
       <p className="report-card-text">{r.text}</p>
+      {r.require && (
+        <div className="report-card-requirement">
+          <span className="report-card-requirement-label">Requirement:</span> {r.require}
+        </div>
+      )}
       <div className="report-card-expand-hint">
         <FaSearchPlus /> View full report
       </div>
@@ -94,7 +91,6 @@ const ManagerDailyReportPage = () => {
 
   const { reports, loading, error, refreshReports } = useManagerDailyReports(apiFilters);
   const [userIdToName, setUserIdToName] = useState({});
-  const [deleting, setDeleting] = useState(null);
   const [myReportCollapsed, setMyReportCollapsed] = useState(false);
   const [showMyPreviousReports, setShowMyPreviousReports] = useState(true);
   const [expandedReport, setExpandedReport] = useState(null);
@@ -113,6 +109,7 @@ const ManagerDailyReportPage = () => {
   const {
     today,
     reportText,
+    requirementText,
     isEditingToday,
     errorMessage,
     reports: myReports,
@@ -120,6 +117,7 @@ const ManagerDailyReportPage = () => {
     loadingToday,
     setErrorMessage,
     handleTextChange,
+    handleRequirementChange,
     enableModify,
     addReport,
   } = useDailyReport({ alwaysEditable: true });
@@ -136,7 +134,7 @@ const ManagerDailyReportPage = () => {
         (userId ? `User ${String(userId).slice(-8)}` : 'Unknown');
       const fullName = userIdToName[userId] ?? userIdToName[userName] ?? null;
       const reportDate = normalizeDate(r.date || r.reportDate);
-      return { id: r._id || r.id, userId, userName, fullName, date: reportDate, text: r.main_content || r.content || r.text, createdAt: r.createdAt, updatedAt: r.updatedAt };
+      return { id: r._id || r.id, userId, userName, fullName, date: reportDate, text: r.main_content || r.content || r.text, require: r.require || r.requirement || '', createdAt: r.createdAt, updatedAt: r.updatedAt };
     })
     .sort((a, b) => (new Date(b.date) || 0) - (new Date(a.date) || 0));
 
@@ -186,7 +184,12 @@ const ManagerDailyReportPage = () => {
       alert("User ID not found. Please login again.");
       return;
     }
-    const payload = { date: today, id: finalUserId, main_content: reportText };
+    const payload = {
+      date: today,
+      id: finalUserId,
+      main_content: reportText,
+      require: requirementText != null ? requirementText.trim() : '',
+    };
     setErrorMessage("");
     const getReportId = () => existingReport?.reportId || existingReport?._id || existingReport?.id;
     try {
@@ -219,20 +222,6 @@ const ManagerDailyReportPage = () => {
       await refreshReports();
     } catch (e) {
       alert(e.message || "Failed to submit report.");
-    }
-  };
-
-  const handleDelete = async (reportId) => {
-    if (!window.confirm('Delete this report?')) return;
-    setDeleting(reportId);
-    try {
-      const result = await dispatch(deleteDailyReports([reportId]));
-      if (result?.ok) await refreshReports();
-      else alert(result?.message || 'Failed to delete.');
-    } catch (e) {
-      alert('Failed to delete.');
-    } finally {
-      setDeleting(null);
     }
   };
 
@@ -302,10 +291,12 @@ const ManagerDailyReportPage = () => {
               <ReportForm
                 today={today}
                 reportText={reportText}
+                requirementText={requirementText}
                 isEditingToday={isEditingToday}
                 errorMessage={errorMessage}
                 loading={loadingToday}
                 onTextChange={handleTextChange}
+                onRequirementChange={handleRequirementChange}
                 onSubmit={handleReport}
                 isModifying={!!existingReport && isEditingToday}
                 compact
@@ -337,7 +328,7 @@ const ManagerDailyReportPage = () => {
           ) : filters.filter_userUniqueID ? (
             <div className="manager-reports-grid">
               {flatReports.map((r) => (
-                <ReportCard key={r.id} r={r} onExpand={setExpandedReport} onDelete={handleDelete} deleting={deleting} formatDateTime={formatDateTime} />
+                <ReportCard key={r.id} r={r} onExpand={setExpandedReport} formatDateTime={formatDateTime} />
               ))}
             </div>
           ) : (
@@ -360,7 +351,7 @@ const ManagerDailyReportPage = () => {
                       <div className="user-report-group__body">
                         <div className="manager-reports-grid">
                           {group.reports.map((r) => (
-                            <ReportCard key={r.id} r={r} onExpand={setExpandedReport} onDelete={handleDelete} deleting={deleting} formatDateTime={formatDateTime} />
+                            <ReportCard key={r.id} r={r} onExpand={setExpandedReport} formatDateTime={formatDateTime} />
                           ))}
                         </div>
                       </div>
@@ -388,6 +379,12 @@ const ManagerDailyReportPage = () => {
               </div>
             )}
             <div className="report-expand-text">{expandedReport.text}</div>
+            {expandedReport.require && (
+              <div className="report-expand-requirement">
+                <div className="report-expand-requirement-label">Requirement</div>
+                <div className="report-expand-requirement-text">{expandedReport.require}</div>
+              </div>
+            )}
           </div>
         </div>,
         document.body

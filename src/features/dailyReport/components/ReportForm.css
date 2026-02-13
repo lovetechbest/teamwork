@@ -59,6 +59,19 @@
   opacity: 0.6;
 }
 
+.report-form-requirement-label {
+  font-size: 13px;
+  color: var(--muted);
+  width: 100%;
+  max-width: 400px;
+  text-align: left;
+  font-weight: 500;
+}
+
+.report-requirement-textarea {
+  min-height: 60px;
+}
+
 .report-button {
   background: linear-gradient(135deg, var(--accent), #5a66d1);
   color: white;

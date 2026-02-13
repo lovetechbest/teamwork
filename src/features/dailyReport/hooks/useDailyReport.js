@@ -16,6 +16,7 @@ export const useDailyReport = (options = {}) => {
   const storageKey = getStorageKey(currentUserId);
   
   const [reportText, setReportText] = useState('');
+  const [requirementText, setRequirementText] = useState('');
   const [isEditingToday, setIsEditingToday] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [loadingToday, setLoadingToday] = useState(true);
@@ -44,6 +45,7 @@ export const useDailyReport = (options = {}) => {
         if (report) {
           todayText = report.main_content || report.content || report.text || '';
           hasTodayReport = true;
+          if (!cancelled) setRequirementText(report.require || report.requirement || '');
           const newReport = { id: Date.now(), reportId: report._id || report.id, date: serverToday, text: todayText, createdAt: report.createdAt, updatedAt: report.updatedAt };
           const filtered = (history.length > 0 ? history : []).filter(r => r.date !== serverToday);
           mergedReports = [newReport, ...filtered];
@@ -51,9 +53,13 @@ export const useDailyReport = (options = {}) => {
           mergedReports = history;
           const todayReport = history.find(r => r.date === serverToday);
           hasTodayReport = !!todayReport;
-          if (todayReport) todayText = todayReport.text;
+          if (todayReport) {
+            todayText = todayReport.text;
+            if (!cancelled && todayReport.require !== undefined) setRequirementText(todayReport.require || '');
+          }
         } else {
           mergedReports = [];
+          if (!cancelled) setRequirementText('');
         }
         setReports(mergedReports);
         setReportText(todayText);
@@ -90,6 +96,11 @@ export const useDailyReport = (options = {}) => {
     setReportText(e.target.value);
   };
 
+  const handleRequirementChange = (e) => {
+    if (!isEditingToday) return;
+    setRequirementText(e.target.value);
+  };
+
   const enableModify = () => {
     setIsEditingToday(true);
   };
@@ -105,6 +116,7 @@ export const useDailyReport = (options = {}) => {
   return {
     today,
     reportText,
+    requirementText,
     isEditingToday,
     errorMessage,
     reports,
@@ -112,7 +124,9 @@ export const useDailyReport = (options = {}) => {
     loadingToday,
     setErrorMessage,
     setReportText,
+    setRequirementText,
     handleTextChange,
+    handleRequirementChange,
     enableModify,
     addReport,
   };
