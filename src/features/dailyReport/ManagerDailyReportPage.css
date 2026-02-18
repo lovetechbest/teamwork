@@ -29,6 +29,39 @@
   color: var(--accent);
 }
 
+.manager-bar-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.download-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, var(--accent), #5a66d1);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(108, 124, 255, 0.3);
+}
+
+.download-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5a66d1, var(--accent));
+  box-shadow: 0 4px 12px rgba(108, 124, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.download-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .manager-filters {
   background: var(--panel-2);
   border-radius: 8px;

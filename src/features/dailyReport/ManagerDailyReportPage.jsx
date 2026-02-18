@@ -4,11 +4,12 @@ import { useDispatch } from 'react-redux';
 import { useManagerDailyReports } from './hooks/useManagerDailyReports';
 import { useDailyReport } from './hooks/useDailyReport';
 import { getAccessToken, setUserId } from '../../store/auth/authStorage';
-import { submitDailyReport, updateDailyReport, fetchReportForDate, getServerDay, normalizeDate } from '../../store/reports/reportActions';
+import { submitDailyReport, updateDailyReport, fetchReportForDate, getServerDay, normalizeDate, fetchAllDailyReports } from '../../store/reports/reportActions';
 import { fetchUsers } from '../../store/users/userActions';
 import ReportForm from './components/ReportForm';
 import ReportList from './components/ReportList';
-import { FaUsers, FaFilter, FaUser, FaSearchPlus } from 'react-icons/fa';
+import { FaUsers, FaFilter, FaUser, FaSearchPlus, FaDownload } from 'react-icons/fa';
+import { exportReportsToWord } from '../../utils/exportToWord';
 import './DailyReportPage.css';
 import './ManagerDailyReportPage.css';
 
@@ -229,11 +230,96 @@ const ManagerDailyReportPage = () => {
     setFilters((prev) => ({ ...prev, filter_userUniqueID: userId || '' }));
   };
 
+  const handleDownloadReports = async () => {
+    // Determine which date to use - prioritize single date mode
+    let targetDate;
+    if (filterMode === 'single') {
+      targetDate = filters.date;
+    } else {
+      // For range mode, use endDate if available, otherwise startDate
+      targetDate = filters.endDate || filters.startDate;
+    }
+    
+    // Fallback to today if no date selected
+    if (!targetDate) {
+      try {
+        targetDate = await getServerDay();
+      } catch (e) {
+        alert('Please select a date first');
+        return;
+      }
+    }
+
+    try {
+      // Fetch all reports for the selected date (no user filter for download)
+      const apiFilters = {
+        startDate: targetDate,
+        endDate: targetDate,
+      };
+      
+      const allReports = await dispatch(fetchAllDailyReports(apiFilters));
+      const reportsArray = Array.isArray(allReports) ? allReports : (allReports?.reports || []);
+      
+      if (reportsArray.length === 0) {
+        alert(`No reports found for ${targetDate}`);
+        return;
+      }
+
+      // Map reports to the format needed for export
+      const reportsForExport = reportsArray
+        .filter((r) => r && (r._id || r.id))
+        .map((r) => {
+          const userId = typeof r.user === 'object' ? r.user?._id || r.user?.id || r.user?.uniqueID : (r.user || r.userId || r.user_id || r.id);
+          const userName = (typeof r.user === 'object' && r.user?.userID) ||
+            r.userName || r.user_name || r.name ||
+            (typeof r.user === 'object' ? r.user?.name : null) ||
+            (userId ? `User ${String(userId).slice(-8)}` : 'Unknown');
+          const fullName = userIdToName[userId] ?? userIdToName[userName] ?? null;
+          
+          return {
+            fullName: fullName || userName,
+            userName: userName,
+            text: r.main_content || r.content || r.text || '',
+            require: r.require || r.requirement || '',
+            date: normalizeDate(r.date || r.reportDate),
+          };
+        })
+        .filter((r) => r.date === targetDate) // Only include reports for the exact date
+        .sort((a, b) => {
+          // Sort by username
+          const nameA = (a.fullName || a.userName || '').toLowerCase();
+          const nameB = (b.fullName || b.userName || '').toLowerCase();
+          return nameA.localeCompare(nameB);
+        });
+
+      if (reportsForExport.length === 0) {
+        alert(`No reports found for ${targetDate}`);
+        return;
+      }
+
+      // Export to Word
+      await exportReportsToWord(reportsForExport, targetDate);
+    } catch (error) {
+      console.error('Error downloading reports:', error);
+      alert('Failed to download reports. Please try again.');
+    }
+  };
+
   return (
     <div className="daily-report manager-daily-report">
       <div className="manager-bar">
         <h2 className="manager-title"><FaUsers /> Team Reports</h2>
-        <button onClick={refreshReports} className="refresh-button" disabled={loading}>Refresh</button>
+        <div className="manager-bar-actions">
+          <button 
+            onClick={handleDownloadReports} 
+            className="download-button" 
+            disabled={loading || flatReports.length === 0}
+            title="Download all reports for selected date as Word document"
+          >
+            <FaDownload /> Download Word
+          </button>
+          <button onClick={refreshReports} className="refresh-button" disabled={loading}>Refresh</button>
+        </div>
       </div>
 
       <div className="manager-filters">
