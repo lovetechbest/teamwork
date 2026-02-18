@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { useDispatch } from 'react-redux';
 import { useManagerDailyReports } from './hooks/useManagerDailyReports';
 import { useDailyReport } from './hooks/useDailyReport';
-import { getAccessToken, setUserId } from '../../store/auth/authStorage';
+import { getAccessToken, setUserId, getUserId } from '../../store/auth/authStorage';
 import { submitDailyReport, updateDailyReport, fetchReportForDate, getServerDay, normalizeDate, fetchAllDailyReports } from '../../store/reports/reportActions';
 import { fetchUsers } from '../../store/users/userActions';
 import ReportForm from './components/ReportForm';
@@ -251,6 +251,18 @@ const ManagerDailyReportPage = () => {
     }
 
     try {
+      // Get manager's own user ID
+      let managerUserId = currentUserId || getUserId();
+      if (!managerUserId) {
+        const token = getAccessToken();
+        if (token) {
+          try {
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            managerUserId = payload.id || payload.userId || payload.userID || payload.sub;
+          } catch (e) { /* ignore */ }
+        }
+      }
+
       // Fetch all reports for the selected date (no user filter for download)
       const apiFilters = {
         startDate: targetDate,
@@ -260,13 +272,60 @@ const ManagerDailyReportPage = () => {
       const allReports = await dispatch(fetchAllDailyReports(apiFilters));
       const reportsArray = Array.isArray(allReports) ? allReports : (allReports?.reports || []);
       
-      if (reportsArray.length === 0) {
+      // Also get manager's own report if not already in the list
+      let managerReport = null;
+      if (managerUserId) {
+        // Check if manager's report is already in the fetched reports
+        const managerReportInList = reportsArray.find((r) => {
+          const userId = typeof r.user === 'object' ? r.user?._id || r.user?.id || r.user?.uniqueID : (r.user || r.userId || r.user_id || r.id);
+          return userId === managerUserId && normalizeDate(r.date || r.reportDate) === targetDate;
+        });
+
+        if (!managerReportInList) {
+          // Check if manager has a report for this date in myReports
+          const myReportFromList = myReports.find((r) => normalizeDate(r.date) === targetDate);
+          
+          if (myReportFromList) {
+            // Try to fetch the full report data from server
+            try {
+              const fetchedReport = await dispatch(fetchReportForDate(targetDate, managerUserId));
+              if (fetchedReport && (fetchedReport._id || fetchedReport.id)) {
+                managerReport = fetchedReport;
+              }
+            } catch (e) {
+              // If fetch fails, construct report from myReports data
+              managerReport = {
+                _id: myReportFromList.reportId || myReportFromList._id || myReportFromList.id,
+                date: targetDate,
+                main_content: myReportFromList.text || reportText || '',
+                require: myReportFromList.require || requirementText || '',
+                user: managerUserId,
+              };
+            }
+          } else {
+            // Try to fetch manager's report from server
+            try {
+              const fetchedReport = await dispatch(fetchReportForDate(targetDate, managerUserId));
+              if (fetchedReport && (fetchedReport._id || fetchedReport.id)) {
+                managerReport = fetchedReport;
+              }
+            } catch (e) {
+              // No manager report found for this date
+            }
+          }
+        }
+      }
+
+      // Combine all reports
+      const allReportsForDate = managerReport ? [...reportsArray, managerReport] : reportsArray;
+      
+      if (allReportsForDate.length === 0) {
         alert(`No reports found for ${targetDate}`);
         return;
       }
 
       // Map reports to the format needed for export
-      const reportsForExport = reportsArray
+      const reportsForExport = allReportsForDate
         .filter((r) => r && (r._id || r.id))
         .map((r) => {
           const userId = typeof r.user === 'object' ? r.user?._id || r.user?.id || r.user?.uniqueID : (r.user || r.userId || r.user_id || r.id);
@@ -282,9 +341,14 @@ const ManagerDailyReportPage = () => {
             text: r.main_content || r.content || r.text || '',
             require: r.require || r.requirement || '',
             date: normalizeDate(r.date || r.reportDate),
+            userId: userId, // Keep userId for deduplication
           };
         })
         .filter((r) => r.date === targetDate) // Only include reports for the exact date
+        // Remove duplicates (in case manager's report was already in the list)
+        .filter((r, index, self) => 
+          index === self.findIndex((t) => t.userId === r.userId)
+        )
         .sort((a, b) => {
           // Sort by username
           const nameA = (a.fullName || a.userName || '').toLowerCase();
