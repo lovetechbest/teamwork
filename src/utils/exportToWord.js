@@ -74,39 +74,15 @@ const createParagraphsWithLineBreaks = (text, fontSize = 24, centerAlign = false
 };
 
 /**
- * Helper function to add 1 day to a date string in yyyy-mm-dd format
- * @param {string} dateStr - Date string in yyyy-mm-dd format
- * @returns {string} Date string +1 day in yyyy-mm-dd format
- */
-const addOneDay = (dateStr) => {
-  if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-    return dateStr;
-  }
-  
-  const [year, month, day] = dateStr.split('-').map(Number);
-  const date = new Date(year, month - 1, day); // month is 0-indexed
-  date.setDate(date.getDate() + 1);
-  
-  const newYear = date.getFullYear();
-  const newMonth = String(date.getMonth() + 1).padStart(2, '0');
-  const newDay = String(date.getDate()).padStart(2, '0');
-  
-  return `${newYear}-${newMonth}-${newDay}`;
-};
-
-/**
  * Export daily reports to Word document
  * @param {Array} reports - Array of report objects with { fullName, userName, text, require, date }
- * @param {string} date - Date string in yyyy-mm-dd format
+ * @param {string} date - Date string in yyyy-mm-dd format (exact date to use, no modification)
  */
 export const exportReportsToWord = async (reports, date) => {
   if (!reports || reports.length === 0) {
     alert('No reports to export');
     return;
   }
-
-  // Add 1 day to the date for display in the file
-  const displayDate = addOneDay(date);
 
   // Professional color scheme
   const headerBgColor = '4472C4'; // Professional blue
@@ -225,9 +201,9 @@ export const exportReportsToWord = async (reports, date) => {
           },
         },
         children: [
-          // Title with professional styling (date +1)
+          // Title with professional styling
           new Paragraph({
-            children: [new TextRun({ text: `Daily Reports - ${displayDate}`, bold: true, size: 36, color: '4472C4', font: fontFamily })],
+            children: [new TextRun({ text: `Daily Reports - ${date}`, bold: true, size: 36, color: '4472C4', font: fontFamily })],
             heading: 'Heading1',
             alignment: AlignmentType.CENTER,
             spacing: { before: 200, after: 400 },
@@ -247,7 +223,7 @@ export const exportReportsToWord = async (reports, date) => {
   // Generate and download the document
   try {
     const blob = await Packer.toBlob(doc);
-    const fileName = `${displayDate}.docx`; // Use date +1 for filename
+    const fileName = `${date}.docx`; // Use exact date for filename
     saveAs(blob, fileName);
   } catch (error) {
     console.error('Error generating Word document:', error);
